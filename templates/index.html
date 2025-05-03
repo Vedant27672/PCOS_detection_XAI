@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>PCOS Detection</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .form-group label {
+            font-weight: 600;
+        }
+        .prediction-result {
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .prediction-result p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        .img-fluid {
+            max-height: 300px;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>PCOS Ultrasound Image Detection</h1>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="ultrasound_image">Upload Ultrasound Image</label>
+            <input type="file" class="form-control-file" id="ultrasound_image" name="ultrasound_image" accept="image/*" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Predict</button>
+    </form>
+    {% if label %}
+        <div class="prediction-result">
+            <h3>Prediction Result:</h3>
+            <p><strong>Status:</strong> {{ label }}</p>
+            <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Uploaded Image" class="img-fluid" />
+            {% if heatmap_filename %}
+            <h4 class="mt-4">GradCAM Heatmap:</h4>
+            <img src="{{ url_for('static', filename='heatmaps/' + heatmap_filename) }}" alt="GradCAM Heatmap" class="img-fluid" />
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+</body>
+</html>
