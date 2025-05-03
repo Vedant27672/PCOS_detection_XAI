@@ -1,0 +1,126 @@
+/* Navbar Styling */
+.navbar {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+.navbar-brand {
+    font-weight: bold;
+    font-size: 24px;
+}
+.nav-link:hover {
+    color: #ff6f61 !important;
+    transform: scale(1.1);
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* File Upload Section */
+.font-weight-bold {
+    color: #333;
+    font-size: 18px;
+}
+#downloadBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    float:right
+}
+#downloadBtn:hover {
+    background-color: #3498db;
+}
+/* Image Preview Section */
+#imagePreview, #outputImage {
+    height: 300px; /* Fixed size for consistency */
+    width: 300px; /* Fixed size for consistency */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: contain;
+    background-repeat: no-repeat; /* Prevents repeating the image */
+    background-position: center;
+    background-color: #f8f9fa;
+    border: 2px dashed #ccc;
+    color: #6c757d;
+    font-size: 16px;
+    font-style: italic;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#imagePreview:hover, #outputContainer img:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Grad-CAM Output Section */
+#outputContainer img {
+    height: 300px; /* Ensure consistency with input preview */
+    width: 300px;
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Button Styling */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+    transform: translateY(-2px);
+}
+
+/* Loader */
+.loader {
+    border: 4px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 4px solid #007bff;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin: 10px auto;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* General Spacing and Layout */
+.container {
+    max-width: 1200px;
+}
+h2 {
+    font-weight: bold;
+    color: #333;
+}
+h3 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #333;
+}
+
+/* Effects for Input and Output Images */
+.img-preview, #outputContainer {
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover effect for images */
+.img-preview:hover, #outputContainer:hover {
+    border-color: #007bff;
+}
