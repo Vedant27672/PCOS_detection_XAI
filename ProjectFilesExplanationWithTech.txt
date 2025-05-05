@@ -1,0 +1,121 @@
+PCOS1 Project - Basic Functionality of Folders and Files
+
+1. app.py
+- The main Flask web application backend.
+- Handles routing, file uploads, model loading/training, image prediction, and GradCAM visualization.
+
+2. bestmodel.h5
+- The trained Keras deep learning model file used for PCOS detection.
+
+3. PCOS_single_file.py
+- Script containing model training and GradCAM implementation.
+
+4. PCOS_single_file.ipynb
+- Jupyter notebook version of the model training and GradCAM code.
+
+5. README.md
+- Project overview, setup instructions, and usage guide.
+
+6. templates/
+- Contains HTML templates for the web interface.
+- index.html is the main page for uploading images and displaying results.
+- base.html is a layout template but currently unused.
+
+7. static/
+- Contains static files like CSS, JavaScript, and images.
+- uploads/: Stores uploaded ultrasound images.
+- heatmaps/: Stores generated GradCAM heatmap images.
+- bootstrap-4.5.3-dist/: Bootstrap CSS/JS files.
+
+8. train/
+- Contains training images categorized into infected/ and notinfected/ subfolders.
+
+9. test/
+- Contains test images categorized into infected/ and notinfected/ subfolders.
+
+10. val/
+- Contains validation images categorized into infected/ and notinfected/ subfolders.
+
+11. uploads/
+- Stores ultrasound images uploaded by users via the web interface.
+
+12. .git/
+- Git version control metadata.
+
+
+
+
+PCOS Detection Web App with GradCAM – Code Overview
+
+This project is a web-based application built using Flask that detects PCOS (Polycystic Ovary Syndrome) from ultrasound images using a trained deep learning model (MobileNet). It also provides visual explanations of predictions using GradCAM heatmaps.
+
+1. Model Construction and Compilation
+
+The base model used is MobileNet with include_top=False to exclude default classification layers.
+
+A new Flatten layer followed by a Dense layer with sigmoid activation is added for binary classification.
+
+All layers of the base model are frozen to retain pre-trained weights.
+
+The model is compiled using the rmsprop optimizer and binary_crossentropy loss.
+
+2. Data Preprocessing
+Two functions manage image preprocessing:
+
+preprocessingImage1: applies preprocessing with image augmentation like zoom, shear, and horizontal flip.
+
+preprocessingImage2: applies only normalization using MobileNet's preprocess_input.
+
+3. Dataset Splitting
+
+The datafolder(path, split) function organizes image datasets into training and validation folders.
+
+It randomly selects a percentage of images from each class and moves them accordingly.
+
+4. Model Training
+
+The model is trained using model.fit() on preprocessed training and validation data.
+
+ModelCheckpoint saves the best model, and EarlyStopping stops training if validation accuracy doesn’t improve.
+
+The final model is saved and reloaded using load_model().
+
+5. Image Prediction with GradCAM
+
+The function predict_image(image_path):
+
+Loads and preprocesses the image.
+
+Uses the model to predict whether the image is “Affected” or “Not Affected”.
+
+Generates a GradCAM heatmap showing the areas in the image the model focused on during prediction.
+
+6. GradCAM Class
+
+Computes gradients of the target output with respect to the last convolutional layer.
+
+Calculates weighted averages of the gradients to produce a heatmap.
+
+Resizes and normalizes the heatmap for visualization.
+
+Overlays the heatmap on the original image using OpenCV color maps.
+
+7. Flask App Logic
+
+The / route:
+
+Accepts an image file via a form.
+
+Saves the file using secure_filename.
+
+Calls predict_image() to get the prediction and heatmap.
+
+Displays the result on index.html.
+
+The /uploads/<filename> route serves uploaded files.
+
+8. Output
+
+Displays whether the input ultrasound image is “Affected” or “Not Affected”.
+
+Saves and shows the heatmap image highlighting the model’s focus regions.
