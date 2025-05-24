@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, redirect, url_for
 import os
+import math
 from werkzeug.utils import secure_filename
 import numpy as np
 import tensorflow as tf
@@ -19,15 +20,17 @@ from keras.applications.mobilenet import MobileNet
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import keras
 
-model_path = 'D:/Projects/PCOS1/bestmodel.h5'
+model_path = 'D:/Projects_local/PCOS_detection_XAI/bestmodel.h5'
 
 if os.path.exists(model_path):
     model = load_model(model_path)
 else:
-    ROOT_DIR = 'D:/Projects/PCOS1/PCOS'
+    ROOT_DIR = 'D:/Projects_local/PCOS_detection_XAI'
     number_of_images = {}
     for dir in os.listdir(ROOT_DIR):
-        number_of_images[dir] = len(os.listdir(os.path.join(ROOT_DIR, dir)))
+        dir_path = os.path.join(ROOT_DIR, dir)
+        if os.path.isdir(dir_path):
+            number_of_images[dir] = len(os.listdir(dir_path))
 
     def preprocessingImage1(path):
         image_data = ImageDataGenerator(zoom_range=0.2, shear_range=0.2, preprocessing_function=preprocess_input, horizontal_flip=True)
@@ -43,13 +46,15 @@ else:
         if not os.path.exists("./" + path):
             os.mkdir("./" + path)
             for dir in os.listdir(ROOT_DIR):
-                os.makedirs("./" + path + "/" + dir)
-                num_images = max(math.floor(split * number_of_images[dir]) - 5, 0)
-                for img in np.random.choice(a=os.listdir(os.path.join(ROOT_DIR, dir)), size=num_images, replace=False):
-                    O = os.path.join(ROOT_DIR, dir, img)
-                    D = os.path.join("./" + path, dir)
-                    shutil.copy(O, D)
-                    os.remove(O)
+                dir_path = os.path.join(ROOT_DIR, dir)
+                if os.path.isdir(dir_path):
+                    os.makedirs("./" + path + "/" + dir)
+                    num_images = max(math.floor(split * number_of_images[dir]) - 5, 0)
+                    for img in np.random.choice(a=os.listdir(os.path.join(ROOT_DIR, dir)), size=num_images, replace=False):
+                        O = os.path.join(ROOT_DIR, dir, img)
+                        D = os.path.join("./" + path, dir)
+                        shutil.copy(O, D)
+                        os.remove(O)
         else:
             print("Folder already exist")
 
@@ -57,9 +62,9 @@ else:
     datafolder("test", 0.15)
     datafolder("val", 0.15)
 
-    train_data = preprocessingImage1('D:/Projects/PCOS1/train')
-    test_data = preprocessionfImage2('D:/Projects/PCOS1/test')
-    val_data = preprocessionfImage2('D:/Projects/PCOS1/val')
+    train_data = preprocessingImage1('D:/Projects_local/PCOS_detection_XAI/train')
+    test_data = preprocessionfImage2('D:/Projects_local/PCOS_detection_XAI/test')
+    val_data = preprocessionfImage2('D:/Projects_local/PCOS_detection_XAI/val')
 
     base_model = MobileNet(input_shape=(224, 224, 3), include_top=False)
     for layer in base_model.layers:
