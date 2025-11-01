@@ -7,20 +7,41 @@ from tensorflow.keras.applications.mobilenet import preprocess_input
 import cv2
 import base64
 from PIL import Image
+import gdown
 
 
 app = Flask(__name__)
 
 # --- Configuration ---
-model_path = 'D:/Projects_deploy/PCOS_detection_XAI/bestmodel.h5'
+# 1. REPLACE THIS WITH YOUR ACTUAL GOOGLE DRIVE FILE ID
+GOOGLE_FILE_ID = '1dIUenKDBu1gk7A9nsQ8NV9okd1OqX39g'
+MODEL_FILENAME = 'bestmodel.h5'
+TEMP_MODEL_PATH = os.path.join(os.getcwd(), MODEL_FILENAME)
 # ---------------------
 
-# --- Model Loading ---
-if os.path.exists(model_path):
-    print("Loading existing model...")
-    model = load_model(model_path)
-else:
-    raise FileNotFoundError(f"Model file not found at {model_path}. Please ensure the pre-trained model is available.")
+# --- Model Loading Function ---
+def load_external_model():
+    """
+    Downloads the model from Google Drive and loads it into Keras.
+    """
+    if not os.path.exists(TEMP_MODEL_PATH):
+        print("--- Downloading model from Google Drive... ---")
+        try:
+            # Use gdown to download the model from the public share link
+            url = f'https://drive.google.com/uc?id={GOOGLE_FILE_ID}'
+            gdown.download(url, TEMP_MODEL_PATH, quiet=False)
+            print(f"--- Model downloaded to {TEMP_MODEL_PATH} ---")
+        except Exception as e:
+            print(f"Error downloading model: {e}")
+            raise RuntimeError("Failed to download model from Google Drive.")
+
+    # Load the Keras model from the temporary local file
+    model = load_model(TEMP_MODEL_PATH)
+    return model
+
+# --- Main App Execution ---
+# Call the function ONCE when the app starts
+model = load_external_model()
 
 
 # --- GradCAM Class (Reverted to original working logic) ---
