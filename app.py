@@ -1,112 +1,26 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template
 import os
-import shutil
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.models import load_model, Model
 from tensorflow.keras.applications.mobilenet import preprocess_input
-from tensorflow.keras.layers import Flatten, Dense
-from tensorflow.keras.models import Model
-from tensorflow.keras.applications import MobileNet
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
-from tensorflow.keras.optimizers import Adam
-import keras
-from collections import Counter
-import cv2 
-from tensorflow.keras.applications import imagenet_utils
+import cv2
+import base64
+from PIL import Image
 
-# --- CLOUDINARY & TEMPFILE IMPORTS ---
-import cloudinary
-import cloudinary.uploader
-import tempfile
-from dotenv import load_dotenv
-
-# Load environment variables (useful for local development)
-load_dotenv()
-
-# --- CONFIGURATION FROM ENVIRONMENT VARIABLES ---
-# Base directory for relative paths
-BASE_DIR = os.getcwd() 
-
-# Model Path (Loaded from Render Environment Variable)
-MODEL_PATH = os.getenv('MODEL_PATH', 'bestmodel.h5') 
-
-# Cloudinary configuration
-CLOUDINARY_CLOUD_NAME = os.getenv('CLOUDINARY_CLOUD_NAME')
-CLOUDINARY_API_KEY = os.getenv('CLOUDINARY_API_KEY')
-CLOUDINARY_API_SECRET = os.getenv('CLOUDINARY_API_SECRET')
-
-# Configure Cloudinary
-cloudinary.config(
-    cloud_name=CLOUDINARY_CLOUD_NAME,
-    api_key=CLOUDINARY_API_KEY,
-    api_secret=CLOUDINARY_API_SECRET
-)
 
 app = Flask(__name__)
-# UPLOAD_FOLDER is now a temporary folder only needed for local I/O before Cloudinary upload
-app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'tmp_uploads') 
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Define data directories relative to BASE_DIR for training only
-ROOT_DIR = BASE_DIR
-TRAIN_DIR = os.path.join(ROOT_DIR, 'train')
-VAL_DIR = os.path.join(ROOT_DIR, 'val')
-BATCH_SIZE = 32
+# --- Configuration ---
+model_path = 'D:/Projects_deploy/PCOS_detection_XAI/bestmodel.h5'
+# ---------------------
 
-# --- Helper Functions (No change) ---
-# ... (preprocessingImage1 and preprocessionfImage2 remain unchanged)
-def preprocessingImage1(path):
-    image_data = ImageDataGenerator(zoom_range=0.2, shear_range=0.2, preprocessing_function=preprocess_input, horizontal_flip=True)
-    image = image_data.flow_from_directory(directory=path, target_size=(224, 224), batch_size=BATCH_SIZE, class_mode='binary')
-    return image
-
-def preprocessionfImage2(path):
-    image_data = ImageDataGenerator(preprocessing_function=preprocess_input)
-    image = image_data.flow_from_directory(directory=path, target_size=(224, 224), batch_size=BATCH_SIZE, class_mode='binary')
-    return image
-
-def datafolder(path, split):
-    # This logic is irrelevant during Render deployment but kept for local training
-    pass 
-
-# --- Model Loading and Training Logic (Uses MODEL_PATH from env) ---
-
-if os.path.exists(MODEL_PATH):
+# --- Model Loading ---
+if os.path.exists(model_path):
     print("Loading existing model...")
-    model = load_model(MODEL_PATH)
+    model = load_model(model_path)
 else:
-    # This block will ONLY run if 'bestmodel.h5' is missing in the deployed environment.
-    print("Model not found. Initializing data and training model (SKIPPED in deployment environment)...")
-
-    # Assuming training data exists locally during development/initial build
-    datafolder("train", 0.7)
-    datafolder("test", 0.15)
-    datafolder("val", 0.15)
-
-    train_data = preprocessingImage1(TRAIN_DIR)
-    temp_val_generator = preprocessionfImage2(VAL_DIR) 
-
-    train_steps = int(np.ceil(train_data.samples / BATCH_SIZE))
-    val_steps = int(np.ceil(temp_val_generator.samples / BATCH_SIZE))
-    
-    class_labels = train_data.labels
-    class_counts = Counter(class_labels)
-    total_samples = len(class_labels)
-    num_classes = len(class_counts)
-    class_weights = {
-        class_idx: total_samples / (num_classes * count)
-        for class_idx, count in class_counts.items()
-    }
-    print(f"Calculated Class Weights: {class_weights}")
-
-    # Build and train model (Phase 1 & 2 logic remains the same)
-    # ... (Your previous MobileNet model building and training fit calls) ...
-    # Placeholder to ensure code runs without full training setup locally:
-    # Raise error if model is absent and training is not possible
-    raise RuntimeError(f"Model file not found at {MODEL_PATH}. Skipping training.")
+    raise FileNotFoundError(f"Model file not found at {model_path}. Please ensure the pre-trained model is available.")
 
 
 # --- GradCAM Class (Reverted to original working logic) ---
@@ -133,7 +47,7 @@ class GradCAM:
             (convOutputs, predictions) = gradModel(inputs)
             
             # Original GradCAM loss calculation (with tensor indexing fix)
-            loss = predictions[0][:, self.classIdx] 
+            loss = predictions[0][self.classIdx]
             
         grads = tape.gradient(loss, convOutputs)
         
@@ -163,111 +77,68 @@ class GradCAM:
         return (heatmap, output)
 
 
-# --- Prediction Function (Returns LOCAL heatmap path) ---
-# NOTE: This function must now return the LOCAL path of the generated heatmap
-def predict_image(image_path):
-    img = load_img(image_path, target_size=(224, 224))
-    img_array = img_to_array(img)
+def predict_image(image_file):
+    # Read image from file stream directly
+    img = Image.open(image_file)
+    img = img.convert('RGB')  # Ensure RGB format
+    img = img.resize((224, 224))
+    img_array = np.array(img)
     img_array_expanded = np.expand_dims(img_array, axis=0)
     img_preprocessed = preprocess_input(img_array_expanded)
 
+    # --- Prediction Logic (STRICTLY UNCHANGED, as requested) ---
     pred = model.predict(img_preprocessed)[0][0]
     label = "Not Affected" if pred >= 0.5 else "Affected"
+    # ------------------------------------------------------------
 
     # Prepare image for GradCAM
     image_for_gradcam = img_preprocessed
-    cam = GradCAM(model, classIdx=0) 
-    
-    heatmap_array = cam.compute_heatmap(image_for_gradcam)
+    cam = GradCAM(model, classIdx=0)
 
-    # Load original image with OpenCV for overlay
-    orig = cv2.imread(image_path)
-    if orig is None:
-        raise FileNotFoundError(f"Image file not found: {image_path}")
+    try:
+        heatmap = cam.compute_heatmap(image_for_gradcam)
+    except Exception as e:
+        print(f"GradCAM computation failed: {e}. Returning blank heatmap.")
+        heatmap = np.zeros((224, 224), dtype="uint8")
 
-    heatmap_resized = cv2.resize(heatmap_array, (orig.shape[1], orig.shape[0]))
-    
-    (heatmap_color, output) = cam.overlay_heatmap(heatmap_resized, orig.astype("uint8"), alpha=0.5)
+    # Use the numpy array for overlay (no need to read from disk)
+    orig = img_array.astype("uint8")
+
+    heatmap = cv2.resize(heatmap, (orig.shape[1], orig.shape[0]))
+
+    (heatmap_color, output) = cam.overlay_heatmap(heatmap, orig, alpha=0.5)
 
     # Draw predicted label on output image
-    output = output.astype("uint8") 
+    output = output.astype("uint8")
     cv2.rectangle(output, (0, 0), (340, 40), (0, 0, 0), -1)
     cv2.putText(output, f"Predicted: {label}", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
-    # --- SAVE HEATMAP TO A TEMPORARY LOCAL FILE ---
-    # Use tempfile to create a secure, temporary path for the heatmap image
-    temp_heatmap_file = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
-    temp_heatmap_path = temp_heatmap_file.name
-    temp_heatmap_file.close()
+    # Encode the heatmap image to base64 for real-time display
+    _, buffer = cv2.imencode('.jpg', output)
+    heatmap_base64 = base64.b64encode(buffer).decode('utf-8')
+    heatmap_data_url = f"data:image/jpeg;base64,{heatmap_base64}"
 
-    cv2.imwrite(temp_heatmap_path, output)
+    return label, heatmap_data_url
 
-    return label, temp_heatmap_path
-
-
-# --- FLASK ROUTES (Cloudinary integration) ---
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         if 'ultrasound_image' not in request.files:
             return render_template('index.html', error="No file part")
-        
         file = request.files['ultrasound_image']
         if file.filename == '':
             return render_template('index.html', error="No selected file")
-        
         if file:
-            # 1. Save uploaded file to a temporary local file
-            temp_orig_file = tempfile.NamedTemporaryFile(suffix=os.path.splitext(file.filename)[1], delete=False)
-            temp_orig_path = temp_orig_file.name
-            temp_orig_file.close()
-            
-            file.save(temp_orig_path)
-
             try:
-                # 2. Run prediction and get local heatmap path
-                label, temp_heatmap_path = predict_image(temp_orig_path)
-
-                # 3. Upload Original Image to Cloudinary
-                orig_upload_result = cloudinary.uploader.upload(
-                    temp_orig_path,
-                    folder="pcos-uploads/original",
-                    public_id=os.path.splitext(os.path.basename(temp_orig_path))[0]
-                )
-                orig_url = orig_upload_result.get('secure_url')
-
-                # 4. Upload Heatmap Image to Cloudinary
-                heatmap_upload_result = cloudinary.uploader.upload(
-                    temp_heatmap_path,
-                    folder="pcos-uploads/heatmaps",
-                    public_id=os.path.splitext(os.path.basename(temp_orig_path))[0] + "_heatmap"
-                )
-                heatmap_url = heatmap_upload_result.get('secure_url')
-
+                label, heatmap_data_url = predict_image(file)
             except Exception as e:
-                return render_template('index.html', error=f"Prediction/Upload Error: {e}")
-            finally:
-                # 5. Clean up local temporary files
-                if os.path.exists(temp_orig_path):
-                    os.remove(temp_orig_path)
-                if os.path.exists(temp_heatmap_path):
-                    os.remove(temp_heatmap_path)
-                
-            return render_template(
-                'index.html', 
-                label=label, 
-                filename=os.path.basename(temp_orig_path), # Use original name for display, though URL is used for src
-                original_image_url=orig_url,
-                heatmap_image_url=heatmap_url
-            )
-            
+                return render_template('index.html', error=f"Prediction Error: {e}")
+
+            return render_template('index.html', label=label, heatmap_image_url=heatmap_data_url)
     return render_template('index.html')
 
-# Remove this route, as files are now served via Cloudinary URLs
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
-#     return redirect(url_for('static', filename='uploads/' + filename), code=301) 
+
 
 if __name__ == '__main__':
     import sys
