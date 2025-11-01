@@ -250,9 +250,9 @@
                 {% if heatmap_image_url %}
                 <div class="heatmap-section">
                     <h4><i class="fas fa-eye"></i> GradCAM Heatmap Visualization</h4>
-                    <img src="{{ heatmap_filename }}"
+                    <img src="{{ heatmap_image_url }}"
                          alt="GradCAM Heatmap" class="img-fluid heatmap-image" />
-                    <a href="{{ heatmap_filename }}"
+                    <a href="{{ heatmap_image_url }}"
                        download="heatmap.jpg"
                        class="btn btn-download mt-3">
                         <i class="fas fa-download"></i> Download Heatmap
