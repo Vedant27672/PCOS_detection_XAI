@@ -72,29 +72,6 @@ http://127.0.0.1:5000/
 - Automatic download using `gdown` library
 - No manual model file management required
 
-## Deployment
-
-### Heroku Deployment
-1. Create a Heroku account and install Heroku CLI.
-2. Initialize a Git repository in the project directory.
-3. Create a new Heroku app:
-
-```bash
-heroku create your-app-name
-```
-
-4. Deploy the application:
-
-```bash
-git push heroku main
-```
-
-5. Open the deployed application:
-
-```bash
-heroku open
-```
-
 ### Local Development
 - The application runs in debug mode by default.
 - Model is downloaded once on first startup and cached locally.
@@ -115,12 +92,12 @@ heroku open
 
 ## Dependencies
 
-- Flask==2.3.3: Web framework
-- tensorflow==2.13.0: Deep learning framework
-- opencv-python==4.8.0.76: Computer vision library
-- Pillow==10.0.0: Image processing
-- numpy==1.24.3: Numerical computing
-- gdown==4.7.1: Google Drive downloader
+- Flask: Web framework
+- tensorflow: Deep learning framework
+- opencv-python: Computer vision library
+- Pillow: Image processing
+- numpy: Numerical computing
+- gdown: Google Drive downloader
 
 ## License
 
