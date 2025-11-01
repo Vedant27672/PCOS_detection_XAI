@@ -222,8 +222,8 @@ def predict_image(image_path):
 
     # Prepare image for GradCAM
     image_for_gradcam = img_preprocessed
-    cam = GradCAM(model, classIdx=0) 
-    
+    cam = GradCAM(model, classIdx=0)
+
     try:
         heatmap = cam.compute_heatmap(image_for_gradcam)
     except Exception as e:
@@ -237,16 +237,22 @@ def predict_image(image_path):
         raise FileNotFoundError(f"Image file not found: {image_path}")
 
     heatmap = cv2.resize(heatmap, (orig.shape[1], orig.shape[0]))
-    
+
     (heatmap_color, output) = cam.overlay_heatmap(heatmap, orig.astype("uint8"), alpha=0.5)
 
     # Draw predicted label on output image
-    output = output.astype("uint8") 
+    output = output.astype("uint8")
     cv2.rectangle(output, (0, 0), (340, 40), (0, 0, 0), -1)
     cv2.putText(output, f"Predicted: {label}", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
 
-    # Save heatmap image
+    # Clear existing heatmaps and save new heatmap
     heatmap_dir = 'static/heatmaps'
+    if os.path.exists(heatmap_dir):
+        for filename in os.listdir(heatmap_dir):
+            file_path = os.path.join(heatmap_dir, filename)
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+
     os.makedirs(heatmap_dir, exist_ok=True)
     heatmap_filename = os.path.basename(image_path).rsplit('.', 1)[0] + '_heatmap.jpg'
     heatmap_path = os.path.join(heatmap_dir, heatmap_filename)
@@ -263,17 +269,25 @@ def index():
         if file.filename == '':
             return render_template('index.html', error="No selected file")
         if file:
+            # Clear existing files in uploads folder
+            upload_folder = app.config['UPLOAD_FOLDER']
+            if os.path.exists(upload_folder):
+                for filename in os.listdir(upload_folder):
+                    file_path = os.path.join(upload_folder, filename)
+                    if os.path.isfile(file_path):
+                        os.unlink(file_path)
+
             filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            
-            os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+            filepath = os.path.join(upload_folder, filename)
+
+            os.makedirs(upload_folder, exist_ok=True)
             file.save(filepath)
-            
+
             try:
                 label, heatmap_filename = predict_image(filepath)
             except Exception as e:
                 return render_template('index.html', error=f"Prediction Error: {e}")
-                
+
             return render_template('index.html', label=label, filename=filename, heatmap_filename=heatmap_filename)
     return render_template('index.html')
 

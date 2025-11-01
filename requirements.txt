@@ -3,4 +3,4 @@ keras
 flask
 opencv-python
 numpy
-werkzeug
+Pillow
