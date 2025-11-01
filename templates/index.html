@@ -232,8 +232,8 @@
             {% if label %}
             <div class="result-card">
                 <h3><i class="fas fa-chart-line"></i> Analysis Result</h3>
-                <div class="prediction-status {% if 'Affected' in label %}status-affected{% else %}status-not-affected{% endif %}">
-                    <i class="fas fa-{% if 'Affected' in label %}exclamation-triangle{% else %}check-circle{% endif %}"></i>
+                <div class="prediction-status {% if 'Not Affected' in label %}status-not-affected{% else %}status-affected{% endif %}">
+                    <i class="fas fa-{% if 'Not Affected' in label %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
                     {{ label }}
                 </div>
                 {% if heatmap_filename %}
