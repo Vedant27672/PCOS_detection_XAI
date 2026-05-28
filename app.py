@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from PIL import Image
 from flask import Flask, request, render_template, session, jsonify, send_file, redirect, url_for, flash
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from authlib.integrations.flask_client import OAuth
 from pymongo import MongoClient, DESCENDING
@@ -26,6 +27,7 @@ import gdown
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 app.secret_key = os.environ.get('SECRET_KEY', 'pcos-xai-key-2024')
 app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024
 
