@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Analysis History — PCOS·AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root{--indigo:#4f46e5;--indigo-l:#e0e7ff;--teal:#0ea5e9;--rose:#f43f5e;--rose-l:#ffe4e6;--green:#10b981;--green-l:#d1fae5;--amber:#f59e0b;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;--gray-900:#0f172a;--white:#fff;--r:12px;--sh:0 4px 16px rgba(0,0,0,.08)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--gray-50);color:var(--gray-800);min-height:100vh}
+    nav{background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px;position:sticky;top:0;z-index:100}
+    .nav-brand{font-weight:800;font-size:1.2rem;color:var(--indigo);text-decoration:none;letter-spacing:-.5px}
+    .nav-brand span{color:var(--teal)}
+    .nav-links{display:flex;gap:6px}
+    .nav-links a{text-decoration:none;color:var(--gray-600);font-size:.84rem;font-weight:500;padding:6px 13px;border-radius:8px;transition:.2s}
+    .nav-links a:hover,.nav-links a.active{background:var(--indigo-l);color:var(--indigo)}
+    .user-chip{display:flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:50px;border:1px solid var(--gray-200);text-decoration:none;color:var(--gray-700);font-size:.8rem;font-weight:600;transition:.2s;background:#fff}
+    .user-chip:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .user-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover}
+    .user-avatar-ph{width:26px;height:26px;border-radius:50%;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700}
+    .nav-sign-in{background:#fff;border:1.5px solid var(--gray-200);color:var(--gray-700);padding:6px 13px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;transition:.2s;display:flex;align-items:center;gap:6px}
+    .nav-sign-in:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .nav-logout{font-size:.72rem;color:var(--gray-400);text-decoration:none;padding:4px 8px;border-radius:6px;transition:.2s}
+    .nav-logout:hover{background:var(--rose-l);color:var(--rose);text-decoration:none}
+    .main{max-width:960px;margin:0 auto;padding:48px 24px}
+    .page-title{font-size:1.9rem;font-weight:800;color:var(--gray-900);letter-spacing:-.5px;margin-bottom:8px}
+    .page-sub{font-size:.95rem;color:var(--gray-600);margin-bottom:36px}
+    .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+    .stats-row{display:flex;gap:14px;flex-wrap:wrap}
+    .stat-chip{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:10px 18px;font-size:.84rem;display:flex;align-items:center;gap:8px}
+    .stat-chip strong{font-weight:700}
+    .btn-clear{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--rose-l);border:1px solid #fecdd3;border-radius:var(--r);color:#881337;font-size:.82rem;font-weight:600;cursor:pointer;transition:.2s;text-decoration:none}
+    .btn-clear:hover{background:#fecdd3;text-decoration:none;color:#881337}
+    .history-list{display:flex;flex-direction:column;gap:12px}
+    .hist-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:0 1px 3px rgba(0,0,0,.05);transition:.2s;flex-wrap:wrap}
+    .hist-card:hover{border-color:var(--indigo);box-shadow:var(--sh)}
+    .hist-num{width:32px;height:32px;border-radius:50%;background:var(--gray-100);color:var(--gray-500);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0}
+    .hist-ts{font-size:.76rem;color:var(--gray-400);min-width:120px}
+    .hist-file{font-size:.85rem;font-weight:600;color:var(--gray-800);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:120px}
+    .label-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 12px;border-radius:50px;font-size:.78rem;font-weight:700}
+    .badge-aff{background:var(--rose-l);color:#881337}
+    .badge-ok{background:var(--green-l);color:#065f46}
+    .sev-pill{display:inline-block;padding:2px 10px;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-left:6px}
+    .sev-green{background:var(--green-l);color:#065f46}
+    .sev-teal{background:#e0f2fe;color:#0c4a6e}
+    .sev-amber{background:#fef3c7;color:#78350f}
+    .sev-orange{background:#ffedd5;color:#7c2d12}
+    .sev-rose{background:var(--rose-l);color:#881337}
+    .hist-conf{font-size:.82rem;color:var(--gray-600);min-width:70px;text-align:right}
+    .hist-xai{font-size:.72rem;color:var(--gray-400);min-width:60px;text-align:right;text-transform:uppercase;letter-spacing:.5px}
+    .hist-raw{font-size:.74rem;color:var(--gray-400);min-width:80px;text-align:right}
+    .empty-state{text-align:center;padding:64px 32px;color:var(--gray-400)}
+    .empty-state i{font-size:3rem;display:block;margin-bottom:16px}
+    .empty-state h3{font-size:1.1rem;font-weight:700;color:var(--gray-600);margin-bottom:8px}
+    .empty-state p{font-size:.88rem}
+    .btn-analyze{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;background:var(--indigo);color:var(--white);border-radius:var(--r);text-decoration:none;font-size:.88rem;font-weight:700;margin-top:20px;transition:.2s}
+    .btn-analyze:hover{background:var(--indigo-d);color:var(--white);text-decoration:none}
+    .chart-wrap{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:20px 24px;margin-bottom:24px}
+    .chart-title{font-size:.85rem;font-weight:700;color:var(--gray-700);margin-bottom:14px}
+    .chart-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .chart-bar-lbl{font-size:.78rem;color:var(--gray-600);width:80px;flex-shrink:0}
+    .chart-bar-track{flex:1;height:10px;background:var(--gray-100);border-radius:10px;overflow:hidden}
+    .chart-bar-fill{height:100%;border-radius:10px;transition:width 1s ease}
+    .bar-aff{background:var(--rose)}
+    .bar-ok{background:var(--green)}
+    .chart-bar-val{font-size:.78rem;font-weight:700;color:var(--gray-700);min-width:36px}
+    .hamburger{display:none;background:none;border:1px solid var(--gray-200);color:var(--indigo);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:1rem;line-height:1}
+
+    @media(max-width:768px){
+      nav{padding:0 16px}
+      .hamburger{display:flex;align-items:center;justify-content:center}
+      .nav-links{
+        display:none;flex-direction:column;gap:4px;
+        position:fixed;top:60px;left:0;right:0;
+        background:rgba(255,255,255,.97);backdrop-filter:blur(16px);
+        padding:12px 16px 18px;border-bottom:1px solid var(--gray-200);
+        box-shadow:0 6px 20px rgba(0,0,0,.1);z-index:199;
+      }
+      .nav-links.open{display:flex}
+      .nav-links a{padding:11px 14px;font-size:.92rem;border-radius:9px}
+      .main{padding:28px 14px}
+      .page-title{font-size:clamp(1.35rem,5vw,1.9rem)}
+      .top-bar{flex-direction:column;align-items:flex-start}
+      .stats-row{gap:8px}
+      .stat-chip{font-size:.78rem;padding:8px 12px}
+      .hist-card{gap:10px;padding:14px 14px}
+      .hist-ts{min-width:0;font-size:.72rem}
+      .hist-file{min-width:0;font-size:.8rem}
+      .hist-conf{min-width:0;font-size:.78rem}
+      .empty-state{padding:40px 20px}
+      .chart-wrap{padding:14px 16px}
+    }
+    @media(max-width:680px){
+      .hist-xai,.hist-raw,.hist-ts{display:none}
+      .hist-num{display:none}
+    }
+    @media(max-width:480px){
+      .sev-pill{display:none}
+    }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-brand" href="/"><i class="fa-solid fa-dna"></i> PCOS<span>·AI</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="/">Home</a>
+    <a href="/batch"><i class="fa-solid fa-layer-group"></i> Batch</a>
+    <a href="/compare"><i class="fa-solid fa-code-compare"></i> Compare</a>
+    <a href="/history" class="active"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    {% if current_user.is_authenticated %}
+      <a href="/history" class="user-chip">
+        {% if current_user.picture %}<img src="{{ current_user.picture }}" class="user-avatar" alt=""/>
+        {% else %}<div class="user-avatar-ph">{{ current_user.name[0]|upper }}</div>{% endif %}
+        {{ current_user.name.split()[0] }}
+      </a>
+      <a href="/logout" class="nav-logout" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></a>
+    {% else %}
+      <a href="/login" class="nav-sign-in"><i class="fa-brands fa-google"></i> Sign In</a>
+    {% endif %}
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars" id="hb-icon"></i></button>
+  </div>
+</nav>
+
+<div class="main">
+  <p style="font-size:.8rem;color:var(--gray-400);margin-bottom:16px"><a href="/" style="color:var(--indigo);text-decoration:none"><i class="fa-solid fa-house"></i> Home</a> / Analysis History</p>
+  <h1 class="page-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--indigo)"></i> Analysis History</h1>
+  {% if current_user.is_authenticated %}
+  <p class="page-sub">Showing <strong>{{ current_user.name }}</strong>'s last 50 analyses — private to your account.</p>
+  {% else %}
+  <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px 18px;margin-bottom:24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;flex-shrink:0"></i>
+    <span style="font-size:.86rem;color:#78350f">You're browsing as a guest. History is shared and not private. <a href="/login" style="color:#4f46e5;font-weight:700">Sign in with Google</a> to get your own private history.</span>
+  </div>
+  {% endif %}
+
+  {% if items %}
+  {% set total = items|length %}
+  {% set n_aff = items|selectattr('label','equalto','Affected')|list|length %}
+  {% set n_ok  = items|selectattr('label','equalto','Not Affected')|list|length %}
+
+  <!-- Mini chart -->
+  <div class="chart-wrap">
+    <div class="chart-title"><i class="fa-solid fa-chart-bar" style="color:var(--indigo)"></i> &nbsp;Distribution Summary</div>
+    <div class="chart-bar-row">
+      <div class="chart-bar-lbl">Affected</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill bar-aff" style="width:{{ (n_aff / total * 100)|round|int }}%"></div></div>
+      <div class="chart-bar-val" style="color:var(--rose)">{{ n_aff }}</div>
+    </div>
+    <div class="chart-bar-row">
+      <div class="chart-bar-lbl">Not Affected</div>
+      <div class="chart-bar-track"><div class="chart-bar-fill bar-ok" style="width:{{ (n_ok / total * 100)|round|int }}%"></div></div>
+      <div class="chart-bar-val" style="color:var(--green)">{{ n_ok }}</div>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div class="stats-row">
+      <div class="stat-chip"><i class="fa-solid fa-list" style="color:var(--indigo)"></i> <strong>{{ total }}</strong> total analyses</div>
+      <div class="stat-chip"><i class="fa-solid fa-triangle-exclamation" style="color:var(--rose)"></i> <strong style="color:var(--rose)">{{ n_aff }}</strong> affected</div>
+      <div class="stat-chip"><i class="fa-solid fa-check" style="color:var(--green)"></i> <strong style="color:var(--green)">{{ n_ok }}</strong> not affected</div>
+    </div>
+    <form method="post" action="/clear-history" onsubmit="return confirm('Clear all history?')">
+      <button type="submit" class="btn-clear"><i class="fa-solid fa-trash"></i> Clear All</button>
+    </form>
+  </div>
+
+  <div class="history-list">
+    {% for item in items %}
+    <div class="hist-card">
+      <div class="hist-num">{{ loop.index }}</div>
+      <div class="hist-ts"><i class="fa-regular fa-clock"></i> {{ item.ts }}</div>
+      <div class="hist-file" title="{{ item.filename }}"><i class="fa-regular fa-image" style="color:var(--gray-400)"></i> {{ item.filename }}</div>
+      <div>
+        <span class="label-badge {{ 'badge-aff' if item.label == 'Affected' else 'badge-ok' }}">
+          <i class="fa-solid fa-{{ 'triangle-exclamation' if item.label == 'Affected' else 'check' }}"></i>
+          {{ item.label }}
+        </span>
+        <span class="sev-pill sev-{% if item.severity == 'Clear' %}green{% elif item.severity == 'Low Risk' %}teal{% elif item.severity == 'Borderline' %}amber{% elif item.severity == 'Moderate' %}orange{% else %}rose{% endif %}">{{ item.severity }}</span>
+      </div>
+      <div class="hist-conf"><strong>{{ item.confidence }}%</strong> conf.</div>
+      <div class="hist-xai">{{ item.xai|upper }}</div>
+      <div class="hist-raw">{{ item.raw_pred }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    <h3>No analyses yet</h3>
+    <p>Your analysis history will appear here after you run your first prediction.</p>
+    <a href="/#analyze" class="btn-analyze"><i class="fa-solid fa-microscope"></i> Analyze an Image</a>
+  </div>
+  {% endif %}
+</div>
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+  const hbIcon    = document.getElementById('hb-icon');
+  hamburger?.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    hbIcon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+  });
+  navLinks?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open'); hbIcon.className = 'fa-solid fa-bars';
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Compare — PCOS·AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root{--indigo:#4f46e5;--indigo-l:#e0e7ff;--teal:#0ea5e9;--rose:#f43f5e;--rose-l:#ffe4e6;--green:#10b981;--green-l:#d1fae5;--amber:#f59e0b;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;--gray-900:#0f172a;--white:#fff;--r:12px;--rl:18px;--sh:0 4px 16px rgba(0,0,0,.08)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:var(--gray-50);color:var(--gray-800);min-height:100vh}
+    nav{background:rgba(255,255,255,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px;position:sticky;top:0;z-index:100}
+    .nav-brand{font-weight:800;font-size:1.2rem;color:var(--indigo);text-decoration:none;letter-spacing:-.5px}
+    .nav-brand span{color:var(--teal)}
+    .nav-links{display:flex;gap:6px}
+    .nav-links a{text-decoration:none;color:var(--gray-600);font-size:.84rem;font-weight:500;padding:6px 13px;border-radius:8px;transition:.2s}
+    .nav-links a:hover,.nav-links a.active{background:var(--indigo-l);color:var(--indigo)}
+    .user-chip{display:flex;align-items:center;gap:7px;padding:4px 12px 4px 4px;border-radius:50px;border:1px solid var(--gray-200);text-decoration:none;color:var(--gray-700);font-size:.8rem;font-weight:600;transition:.2s;background:#fff}
+    .user-chip:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .user-avatar{width:26px;height:26px;border-radius:50%;object-fit:cover}
+    .user-avatar-ph{width:26px;height:26px;border-radius:50%;background:var(--indigo);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700}
+    .nav-sign-in{background:#fff;border:1.5px solid var(--gray-200);color:var(--gray-700);padding:6px 13px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;transition:.2s;display:flex;align-items:center;gap:6px}
+    .nav-sign-in:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .nav-logout{font-size:.72rem;color:var(--gray-400);text-decoration:none;padding:4px 8px;border-radius:6px;transition:.2s}
+    .nav-logout:hover{background:var(--rose-l);color:var(--rose);text-decoration:none}
+    .main{max-width:1060px;margin:0 auto;padding:48px 24px}
+    .page-title{font-size:1.9rem;font-weight:800;color:var(--gray-900);letter-spacing:-.5px;margin-bottom:8px}
+    .page-sub{font-size:.95rem;color:var(--gray-600);margin-bottom:36px}
+    .alert-err{background:var(--rose-l);border:1px solid #fecdd3;border-radius:var(--r);padding:13px 17px;display:flex;gap:10px;margin-bottom:22px;color:#881337;font-size:.88rem}
+    /* Upload grid */
+    .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+    .upload-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--rl);padding:24px;box-shadow:var(--sh)}
+    .upload-card h3{font-size:.95rem;font-weight:700;color:var(--gray-800);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .upload-zone{border:2px dashed var(--gray-200);border-radius:var(--r);padding:28px 16px;text-align:center;cursor:pointer;transition:.2s;background:var(--gray-50)}
+    .upload-zone:hover,.upload-zone.drag-over{border-color:var(--indigo);background:var(--indigo-l)}
+    .u-icon{font-size:2rem;color:var(--gray-400);display:block;margin-bottom:10px}
+    .u-hint{font-size:.78rem;color:var(--gray-400)}
+    .browse-link{color:var(--indigo);text-decoration:underline;cursor:pointer;font-weight:600}
+    .file-input{display:none}
+    .prev-wrap{display:none;margin-top:12px}
+    .prev-inner{display:flex;gap:10px;align-items:center;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r);padding:10px}
+    .prev-thumb{width:54px;height:54px;object-fit:cover;border-radius:7px;border:1px solid var(--gray-200)}
+    .prev-meta h5{font-size:.82rem;font-weight:600;color:var(--gray-800)}
+    .prev-meta span{font-size:.74rem;color:var(--gray-400)}
+    .rm-btn{margin-left:auto;background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:.9rem}
+    .btn-analyze{width:100%;padding:13px;background:linear-gradient(135deg,var(--indigo),#6366f1);color:var(--white);border:none;border-radius:var(--r);font-size:.93rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 14px rgba(79,70,229,.28);transition:.2s}
+    .btn-analyze:hover:not(:disabled){opacity:.92;transform:translateY(-1px)}
+    .btn-analyze:disabled{opacity:.5;cursor:not-allowed}
+    /* VS divider */
+    .vs-divider{display:flex;align-items:center;justify-content:center;margin-top:28px;margin-bottom:28px}
+    .vs-badge{background:var(--gray-900);color:var(--white);font-weight:800;font-size:1rem;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+    /* Results comparison */
+    .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+    .result-col{background:var(--white);border-radius:var(--rl);border:1px solid var(--gray-200);overflow:hidden;box-shadow:var(--sh)}
+    .col-header{padding:16px 20px;border-bottom:1px solid var(--gray-100);background:var(--gray-50);font-size:.88rem;font-weight:700;color:var(--gray-700);display:flex;align-items:center;gap:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .col-header i{color:var(--indigo)}
+    .col-body{padding:18px 20px}
+    .verdict-mini{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r);margin-bottom:14px}
+    .verdict-mini.aff{background:var(--rose-l);border:1px solid #fecdd3}
+    .verdict-mini.ok {background:var(--green-l);border:1px solid #a7f3d0}
+    .verdict-mini .vi{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+    .aff .vi{background:var(--rose);color:var(--white)}
+    .ok  .vi{background:var(--green);color:var(--white)}
+    .verdict-mini .vt h4{font-size:.95rem;font-weight:800}
+    .aff .vt h4{color:#881337}
+    .ok  .vt h4{color:#065f46}
+    .verdict-mini .vt p{font-size:.76rem;color:var(--gray-600)}
+    .sev-pill{display:inline-block;padding:2px 10px;border-radius:50px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:6px}
+    .sev-green{background:var(--green-l);color:#065f46}
+    .sev-teal{background:#e0f2fe;color:#0c4a6e}
+    .sev-amber{background:#fef3c7;color:#78350f}
+    .sev-orange{background:#ffedd5;color:#7c2d12}
+    .sev-rose{background:var(--rose-l);color:#881337}
+    .conf-row{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--gray-600);margin-bottom:10px}
+    .conf-track{flex:1;height:8px;background:var(--gray-200);border-radius:8px;overflow:hidden}
+    .conf-fill{height:100%;border-radius:8px}
+    .aff-fill{background:var(--rose)}
+    .ok-fill {background:var(--green)}
+    .img-pair{display:flex;gap:8px;margin-top:10px}
+    .img-pair img{width:calc(50% - 4px);border-radius:8px;border:1px solid var(--gray-200);cursor:zoom-in;transition:.2s}
+    .img-pair img:hover{transform:scale(1.03)}
+    .img-lbl{font-size:.72rem;color:var(--gray-400);text-align:center;margin-top:4px}
+    .error-col{padding:28px;text-align:center;color:var(--gray-400)}
+    /* Comparison banner */
+    .cmp-banner{margin-top:24px;padding:18px 22px;border-radius:var(--r);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+    .cmp-banner.both-same{background:#f0fdf4;border:1px solid #a7f3d0;color:#065f46}
+    .cmp-banner.differ{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12}
+    .cmp-banner i{font-size:1.2rem;flex-shrink:0}
+    .cmp-banner p{font-size:.88rem;font-weight:500}
+    /* Loading */
+    #loading{display:none;position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px)}
+    #loading.on{display:flex}
+    .spin{width:50px;height:50px;border:4px solid rgba(255,255,255,.15);border-top-color:var(--indigo);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .load-txt{color:var(--white);font-size:.93rem;font-weight:500}
+    #lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+    #lb.on{display:flex}
+    #lb img{max-width:90vw;max-height:90vh;border-radius:12px}
+    .hamburger{display:none;background:none;border:1px solid var(--gray-200);color:var(--indigo);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:1rem;line-height:1}
+
+    @media(max-width:768px){
+      nav{padding:0 16px}
+      .hamburger{display:flex;align-items:center;justify-content:center}
+      .nav-links{
+        display:none;flex-direction:column;gap:4px;
+        position:fixed;top:60px;left:0;right:0;
+        background:rgba(255,255,255,.97);backdrop-filter:blur(16px);
+        padding:12px 16px 18px;border-bottom:1px solid var(--gray-200);
+        box-shadow:0 6px 20px rgba(0,0,0,.1);z-index:199;
+      }
+      .nav-links.open{display:flex}
+      .nav-links a{padding:11px 14px;font-size:.92rem;border-radius:9px}
+      .main{padding:28px 14px}
+      .page-title{font-size:clamp(1.35rem,5vw,1.9rem)}
+    }
+    @media(max-width:680px){
+      .upload-grid,.compare-grid{grid-template-columns:1fr}
+      .upload-card{padding:18px 14px}
+      .upload-zone{padding:22px 12px}
+      .img-pair{flex-direction:column}
+      .img-pair img{width:100%}
+      .cmp-banner{flex-direction:column;gap:8px}
+      .verdict-mini{flex-direction:column;text-align:center;padding:14px}
+    }
+  </style>
+</head>
+<body>
+<div id="lb"><img id="lb-img" src="" alt=""/></div>
+<div id="loading"><div class="spin"></div><div class="load-txt">Analyzing both images…</div></div>
+
+<nav>
+  <a class="nav-brand" href="/"><i class="fa-solid fa-dna"></i> PCOS<span>·AI</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="/">Home</a>
+    <a href="/batch"><i class="fa-solid fa-layer-group"></i> Batch</a>
+    <a href="/compare" class="active"><i class="fa-solid fa-code-compare"></i> Compare</a>
+    <a href="/history"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    {% if current_user.is_authenticated %}
+      <a href="/history" class="user-chip">
+        {% if current_user.picture %}<img src="{{ current_user.picture }}" class="user-avatar" alt=""/>
+        {% else %}<div class="user-avatar-ph">{{ current_user.name[0]|upper }}</div>{% endif %}
+        {{ current_user.name.split()[0] }}
+      </a>
+      <a href="/logout" class="nav-logout" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></a>
+    {% else %}
+      <a href="/login" class="nav-sign-in"><i class="fa-brands fa-google"></i> Sign In</a>
+    {% endif %}
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars" id="hb-icon"></i></button>
+  </div>
+</nav>
+
+<div class="main">
+  <p style="font-size:.8rem;color:var(--gray-400);margin-bottom:16px"><a href="/" style="color:var(--indigo);text-decoration:none"><i class="fa-solid fa-house"></i> Home</a> / Compare Images</p>
+  <h1 class="page-title"><i class="fa-solid fa-code-compare" style="color:var(--indigo)"></i> Comparison Mode</h1>
+  <p class="page-sub">Upload two ultrasound images to compare predictions side-by-side. Useful for before/after treatment comparisons or comparing different patients.</p>
+
+  {% if error %}
+  <div class="alert-err"><i class="fa-solid fa-circle-exclamation"></i><span>{{ error }}</span></div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" id="cmp-form">
+    <div class="upload-grid">
+      <!-- Image 1 -->
+      <div class="upload-card">
+        <h3><i class="fa-solid fa-1" style="color:var(--indigo)"></i> First Image</h3>
+        <div class="upload-zone" data-target="f1">
+          <i class="fa-solid fa-image u-icon"></i>
+          <div class="u-hint"><span class="browse-link">Browse</span> or drag &amp; drop</div>
+          <input type="file" class="file-input" name="image1" id="f1" accept="image/*"/>
+        </div>
+        <div class="prev-wrap" id="pw1">
+          <div class="prev-inner">
+            <img class="prev-thumb" id="pt1" src="#" alt=""/>
+            <div class="prev-meta"><h5 id="pn1">—</h5><span id="ps1"></span></div>
+            <button type="button" class="rm-btn" data-id="1"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+      </div>
+      <!-- Image 2 -->
+      <div class="upload-card">
+        <h3><i class="fa-solid fa-2" style="color:var(--teal)"></i> Second Image</h3>
+        <div class="upload-zone" data-target="f2">
+          <i class="fa-solid fa-image u-icon"></i>
+          <div class="u-hint"><span class="browse-link">Browse</span> or drag &amp; drop</div>
+          <input type="file" class="file-input" name="image2" id="f2" accept="image/*"/>
+        </div>
+        <div class="prev-wrap" id="pw2">
+          <div class="prev-inner">
+            <img class="prev-thumb" id="pt2" src="#" alt=""/>
+            <div class="prev-meta"><h5 id="pn2">—</h5><span id="ps2"></span></div>
+            <button type="button" class="rm-btn" data-id="2"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn-analyze" id="go-btn" disabled>
+      <i class="fa-solid fa-code-compare"></i> Compare Both Images
+    </button>
+  </form>
+
+  {% if r1 and r2 %}
+  <div class="vs-divider"><div class="vs-badge">VS</div></div>
+
+  <div class="compare-grid">
+    <!-- Column 1 -->
+    <div class="result-col">
+      <div class="col-header"><i class="fa-solid fa-1"></i> {{ r1.filename if r1.filename else 'Image 1' }}</div>
+      <div class="col-body">
+        {% if r1.error is defined %}
+        <div class="error-col"><i class="fa-solid fa-circle-exclamation" style="font-size:1.5rem;color:var(--rose)"></i><p style="margin-top:8px;font-size:.85rem;color:var(--gray-600)">{{ r1.error }}</p></div>
+        {% else %}
+        <div class="verdict-mini {{ 'aff' if r1.label == 'Affected' else 'ok' }}">
+          <div class="vi"><i class="fa-solid fa-{{ 'triangle-exclamation' if r1.label == 'Affected' else 'check' }}"></i></div>
+          <div class="vt">
+            <h4>{{ r1.label }}</h4>
+            <p>{{ r1.sev_desc }}</p>
+            <span class="sev-pill sev-{{ r1.sev_color }}">{{ r1.severity }}</span>
+          </div>
+        </div>
+        <div class="conf-row">
+          <span style="font-size:.76rem;min-width:80px">{{ r1.confidence }}% conf.</span>
+          <div class="conf-track"><div class="conf-fill {{ 'aff-fill' if r1.label == 'Affected' else 'ok-fill' }}" style="width:{{ r1.confidence }}%"></div></div>
+        </div>
+        <div class="img-pair">
+          <div><img src="{{ r1.orig_url }}" onclick="openLb(this.src)" alt="orig"/><div class="img-lbl">Original</div></div>
+          <div><img src="{{ r1.heatmap_url }}" onclick="openLb(this.src)" alt="heatmap"/><div class="img-lbl">Heatmap</div></div>
+        </div>
+        <div style="margin-top:10px;font-size:.76rem;color:var(--gray-400)">Raw score: {{ r1.raw_pred }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Column 2 -->
+    <div class="result-col">
+      <div class="col-header"><i class="fa-solid fa-2"></i> {{ r2.filename if r2.filename else 'Image 2' }}</div>
+      <div class="col-body">
+        {% if r2.error is defined %}
+        <div class="error-col"><i class="fa-solid fa-circle-exclamation" style="font-size:1.5rem;color:var(--rose)"></i><p style="margin-top:8px;font-size:.85rem;color:var(--gray-600)">{{ r2.error }}</p></div>
+        {% else %}
+        <div class="verdict-mini {{ 'aff' if r2.label == 'Affected' else 'ok' }}">
+          <div class="vi"><i class="fa-solid fa-{{ 'triangle-exclamation' if r2.label == 'Affected' else 'check' }}"></i></div>
+          <div class="vt">
+            <h4>{{ r2.label }}</h4>
+            <p>{{ r2.sev_desc }}</p>
+            <span class="sev-pill sev-{{ r2.sev_color }}">{{ r2.severity }}</span>
+          </div>
+        </div>
+        <div class="conf-row">
+          <span style="font-size:.76rem;min-width:80px">{{ r2.confidence }}% conf.</span>
+          <div class="conf-track"><div class="conf-fill {{ 'aff-fill' if r2.label == 'Affected' else 'ok-fill' }}" style="width:{{ r2.confidence }}%"></div></div>
+        </div>
+        <div class="img-pair">
+          <div><img src="{{ r2.orig_url }}" onclick="openLb(this.src)" alt="orig"/><div class="img-lbl">Original</div></div>
+          <div><img src="{{ r2.heatmap_url }}" onclick="openLb(this.src)" alt="heatmap"/><div class="img-lbl">Heatmap</div></div>
+        </div>
+        <div style="margin-top:10px;font-size:.76rem;color:var(--gray-400)">Raw score: {{ r2.raw_pred }}</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison banner -->
+  {% if r1.label is defined and r2.label is defined %}
+  {% if r1.label == r2.label %}
+  <div class="cmp-banner both-same"><i class="fa-solid fa-equals"></i><p>Both images show <strong>{{ r1.label }}</strong>. The model is consistent across both samples.</p></div>
+  {% else %}
+  <div class="cmp-banner differ"><i class="fa-solid fa-not-equal"></i><p>Images differ: Image 1 is <strong>{{ r1.label }}</strong> ({{ r1.confidence }}% conf.) and Image 2 is <strong>{{ r2.label }}</strong> ({{ r2.confidence }}% conf.). Review heatmaps to understand the discriminating features.</p></div>
+  {% endif %}
+  {% endif %}
+
+  {% endif %}
+</div>
+
+<script>
+  const form = document.getElementById('cmp-form');
+  const goBtn = document.getElementById('go-btn');
+  const loading = document.getElementById('loading');
+  let ready = {1: false, 2: false};
+
+  function checkReady() { goBtn.disabled = !(ready[1] && ready[2]); }
+
+  document.querySelectorAll('.upload-zone').forEach(zone => {
+    const tid = zone.dataset.target;
+    const inp = document.getElementById(tid);
+    zone.querySelector('.browse-link').addEventListener('click', e => { e.stopPropagation(); inp.click(); });
+    zone.addEventListener('click', e => { if (e.target !== inp) inp.click(); });
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) { inp.files = e.dataTransfer.files; showPrev(e.dataTransfer.files[0], tid.slice(-1)); }
+    });
+    inp.addEventListener('change', function () { if (this.files[0]) showPrev(this.files[0], tid.slice(-1)); });
+  });
+
+  function showPrev(file, n) {
+    const r = new FileReader();
+    r.onload = e => {
+      document.getElementById('pt' + n).src = e.target.result;
+      document.getElementById('pn' + n).textContent = file.name;
+      document.getElementById('ps' + n).textContent = (file.size / 1024).toFixed(1) + ' KB';
+      document.getElementById('pw' + n).style.display = 'block';
+      ready[n] = true; checkReady();
+    };
+    r.readAsDataURL(file);
+  }
+
+  document.querySelectorAll('.rm-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const n = btn.dataset.id;
+      document.getElementById('f' + n).value = '';
+      document.getElementById('pw' + n).style.display = 'none';
+      ready[n] = false; checkReady();
+    });
+  });
+
+  form.addEventListener('submit', () => { loading.classList.add('on'); goBtn.disabled = true; });
+
+  function openLb(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('on'); }
+  document.getElementById('lb').addEventListener('click', () => document.getElementById('lb').classList.remove('on'));
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+  const hbIcon    = document.getElementById('hb-icon');
+  hamburger?.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    hbIcon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+  });
+  navLinks?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open'); hbIcon.className = 'fa-solid fa-bars';
+  }));
+</script>
+</body>
+</html>

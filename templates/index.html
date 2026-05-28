@@ -1,271 +1,790 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCOS Detection - AI-Powered Ultrasound Analysis</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            margin: 0;
-        }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PCOS·AI — Explainable Ultrasound Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    :root{--indigo:#4f46e5;--indigo-d:#3730a3;--indigo-l:#e0e7ff;--teal:#0ea5e9;--teal-l:#e0f2fe;--rose:#f43f5e;--rose-l:#ffe4e6;--green:#10b981;--green-l:#d1fae5;--amber:#f59e0b;--orange:#f97316;--gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;--gray-400:#94a3b8;--gray-600:#475569;--gray-800:#1e293b;--gray-900:#0f172a;--white:#fff;--sh:0 4px 16px rgba(0,0,0,.08);--r:12px;--rl:20px}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--gray-50);color:var(--gray-800);line-height:1.6}
 
-        .main-container {
-            max-width: 800px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            margin: 50px auto;
-        }
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:60px}
+    .nav-brand{font-weight:800;font-size:1.2rem;color:var(--indigo);text-decoration:none;letter-spacing:-.5px}
+    .nav-brand span{color:var(--teal)}
+    .nav-links{display:flex;gap:4px;align-items:center}
+    .nav-links a{text-decoration:none;color:var(--gray-600);font-size:.85rem;font-weight:500;padding:6px 13px;border-radius:8px;transition:.2s}
+    .nav-links a:hover{background:var(--indigo-l);color:var(--indigo)}
+    .nav-cta{background:var(--indigo)!important;color:var(--white)!important;box-shadow:0 2px 8px rgba(79,70,229,.3)}
+    .nav-cta:hover{background:var(--indigo-d)!important}
+    .user-chip{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:50px;border:1px solid var(--gray-200);text-decoration:none;color:var(--gray-700);font-size:.82rem;font-weight:600;transition:.2s;background:var(--white)}
+    .user-chip:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .user-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--indigo-l)}
+    .user-avatar-placeholder{width:28px;height:28px;border-radius:50%;background:var(--indigo);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
+    .nav-sign-in{background:var(--white);border:1.5px solid var(--gray-200);color:var(--gray-700);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:600;text-decoration:none;transition:.2s;display:flex;align-items:center;gap:6px}
+    .nav-sign-in:hover{border-color:var(--indigo);color:var(--indigo);text-decoration:none}
+    .nav-logout{font-size:.72rem;color:var(--gray-400);text-decoration:none;padding:4px 8px;border-radius:6px;transition:.2s}
+    .nav-logout:hover{background:var(--rose-l);color:var(--rose);text-decoration:none}
 
-        .header-section {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-        }
+    /* HERO */
+    .hero{min-height:100vh;padding:60px 24px 0;background:linear-gradient(135deg,var(--gray-900) 0%,#1a1040 55%,#0c1a3a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(79,70,229,.25),transparent 70%);pointer-events:none}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);border-radius:50px;padding:6px 18px;font-size:.78rem;font-weight:500;margin-bottom:28px;backdrop-filter:blur(8px)}
+    .hero-badge i{color:var(--teal)}
+    .hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:800;color:var(--white);letter-spacing:-1.5px;line-height:1.1;margin-bottom:20px}
+    .hero h1 span{background:linear-gradient(90deg,#818cf8,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:1.1rem;color:rgba(255,255,255,.62);max-width:540px;margin:0 auto 36px}
+    .hero-stats{display:flex;gap:40px;margin-bottom:44px;flex-wrap:wrap;justify-content:center}
+    .hero-stat .num{font-size:1.9rem;font-weight:800;color:var(--white);line-height:1}
+    .hero-stat .num span{font-size:1.1rem;font-weight:600;color:#818cf8}
+    .hero-stat .desc{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+    .nav-pill-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:44px}
+    .nav-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.75);border-radius:50px;padding:8px 20px;font-size:.82rem;font-weight:500;text-decoration:none;transition:.2s}
+    .nav-pill:hover{background:rgba(255,255,255,.14);color:var(--white)}
+    .nav-pill i{font-size:.8rem}
+    .btn-hero{background:linear-gradient(135deg,var(--indigo),var(--teal));color:var(--white);border:none;border-radius:50px;padding:15px 40px;font-size:1rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(79,70,229,.45);transition:.25s}
+    .btn-hero:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(79,70,229,.55);color:var(--white);text-decoration:none}
 
-        .header-section h1 {
-            font-weight: 700;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    /* SECTIONS */
+    section{padding:80px 24px}
+    .si{max-width:1060px;margin:0 auto}
+    .sec-lbl{font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px}
+    .sec-title{font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:800;color:var(--gray-900);letter-spacing:-.5px;line-height:1.2;margin-bottom:14px}
+    .sec-sub{font-size:1rem;color:var(--gray-600);max-width:600px}
+    .divider{width:48px;height:4px;background:linear-gradient(90deg,var(--indigo),var(--teal));border-radius:4px;margin:16px 0 38px}
 
-        .header-section p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin: 0;
-        }
+    /* ABOUT */
+    #about{background:var(--white)}
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px;margin-bottom:44px}
+    .stat-card{background:linear-gradient(135deg,var(--indigo-l),#f5f3ff);border-radius:var(--r);padding:22px 18px;text-align:center;border:1px solid rgba(79,70,229,.12)}
+    .stat-card .big{font-size:2rem;font-weight:800;color:var(--indigo);line-height:1}
+    .stat-card .lbl{font-size:.8rem;color:var(--gray-600);margin-top:5px}
+    .sym-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+    .sym-card{background:var(--gray-50);border-radius:var(--r);padding:18px;border:1px solid var(--gray-200);display:flex;align-items:flex-start;gap:12px;transition:.2s}
+    .sym-card:hover{border-color:var(--indigo);transform:translateY(-2px);box-shadow:var(--sh)}
+    .sym-icon{width:36px;height:36px;border-radius:9px;background:var(--indigo-l);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .sym-icon i{color:var(--indigo);font-size:.85rem}
+    .sym-card h4{font-size:.88rem;font-weight:600;color:var(--gray-800);margin-bottom:2px}
+    .sym-card p{font-size:.78rem;color:var(--gray-600)}
+    .info-box{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:18px 22px;margin-top:32px;display:flex;gap:12px;align-items:flex-start}
+    .info-box i{color:var(--amber);font-size:1.1rem;flex-shrink:0;margin-top:2px}
+    .info-box p{font-size:.86rem;color:#92400e}
 
-        .content-section {
-            padding: 40px 30px;
-        }
+    /* XAI */
+    #xai{background:var(--gray-50)}
+    .xai-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+    .xai-text p{color:var(--gray-600);font-size:.93rem;margin-bottom:14px}
+    .benefit-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:20px}
+    .benefit-list li{display:flex;align-items:flex-start;gap:10px;font-size:.88rem}
+    .benefit-list li i{color:var(--green);margin-top:2px;flex-shrink:0}
+    .gv-box{background:var(--white);border-radius:var(--rl);padding:26px;box-shadow:var(--sh);border:1px solid var(--gray-200)}
+    .flow-step{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100)}
+    .flow-step:last-child{border-bottom:none}
+    .step-num{width:30px;height:30px;border-radius:50%;background:var(--indigo);color:var(--white);display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0}
+    .step-text h5{font-size:.86rem;font-weight:600;color:var(--gray-800)}
+    .step-text p{font-size:.76rem;color:var(--gray-600)}
+    .leg-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--gray-100)}
+    .leg-item{display:flex;align-items:center;gap:5px;font-size:.76rem;color:var(--gray-600)}
+    .leg-dot{width:13px;height:13px;border-radius:3px}
 
-        .upload-card {
-            background: #f8f9fa;
-            border: 2px dashed #dee2e6;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-        }
+    /* XAI METHOD TABS */
+    .xai-tabs{display:flex;gap:0;border:1px solid var(--gray-200);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+    .xai-tab{flex:1;text-align:center;padding:10px 6px;font-size:.8rem;font-weight:500;color:var(--gray-600);cursor:pointer;transition:.2s;background:var(--white);border:none;border-right:1px solid var(--gray-200)}
+    .xai-tab:last-child{border-right:none}
+    .xai-tab.active{background:var(--indigo);color:var(--white)}
+    .xai-tab-desc{font-size:.78rem;color:var(--gray-400);text-align:center;margin-bottom:22px;min-height:18px}
 
-        .upload-card:hover {
-            border-color: #007bff;
-            background: #f0f8ff;
-        }
+    /* ANALYZE */
+    #analyze{background:var(--white)}
+    .tool-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--rl);padding:34px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+    .upload-zone{border:2px dashed var(--gray-200);border-radius:var(--r);padding:36px 20px;text-align:center;cursor:pointer;transition:.2s;background:var(--white)}
+    .upload-zone:hover,.upload-zone.drag-over{border-color:var(--indigo);background:var(--indigo-l)}
+    .upload-zone .u-icon{font-size:2.4rem;color:var(--gray-400);margin-bottom:12px;display:block}
+    .upload-zone .u-title{font-weight:600;color:var(--gray-800);font-size:.93rem;margin-bottom:5px}
+    .upload-zone .u-hint{font-size:.78rem;color:var(--gray-400)}
+    .browse-link{color:var(--indigo);text-decoration:underline;cursor:pointer;font-weight:600}
+    #file-input{display:none}
+    #preview-wrap{display:none;margin-top:16px}
+    .prev-inner{display:flex;gap:12px;align-items:center;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);padding:12px}
+    #prev-thumb{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--gray-200)}
+    .prev-meta h5{font-size:.86rem;font-weight:600;color:var(--gray-800)}
+    .prev-meta span{font-size:.76rem;color:var(--gray-400)}
+    .rm-btn{margin-left:auto;background:none;border:none;color:var(--gray-400);cursor:pointer;font-size:1rem}
+    .rm-btn:hover{color:var(--rose)}
 
-        .upload-card i {
-            font-size: 3rem;
-            color: #6c757d;
-            margin-bottom: 15px;
-        }
+    /* Symptom questionnaire */
+    .sym-toggle{display:flex;align-items:center;justify-content:space-between;margin-top:20px;margin-bottom:0;cursor:pointer;padding:12px 16px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);transition:.2s}
+    .sym-toggle:hover{border-color:var(--indigo);background:var(--indigo-l)}
+    .sym-toggle span{font-size:.88rem;font-weight:600;color:var(--gray-700);display:flex;align-items:center;gap:8px}
+    .sym-toggle .arrow{transition:.3s;color:var(--gray-400);font-size:.8rem}
+    .sym-panel{display:none;margin-top:0;border:1px solid var(--gray-200);border-top:none;border-radius:0 0 var(--r) var(--r);padding:18px 16px;background:var(--white)}
+    .sym-panel.open{display:block}
+    .sym-q-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+    .sym-q{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:9px;cursor:pointer;transition:.2s}
+    .sym-q:hover{border-color:var(--indigo);background:var(--indigo-l)}
+    .sym-q input{accent-color:var(--indigo);width:16px;height:16px;cursor:pointer;flex-shrink:0}
+    .sym-q label{font-size:.82rem;color:var(--gray-700);cursor:pointer;line-height:1.4}
 
-        .upload-card label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 15px;
-            display: block;
-        }
+    .btn-analyze{width:100%;margin-top:18px;padding:14px;background:linear-gradient(135deg,var(--indigo),#6366f1);color:var(--white);border:none;border-radius:var(--r);font-size:.97rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(79,70,229,.3);transition:.2s}
+    .btn-analyze:hover:not(:disabled){opacity:.92;transform:translateY(-1px)}
+    .btn-analyze:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-        .btn-predict {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 50px;
-            padding: 12px 40px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
+    /* Loading */
+    #loading{display:none;position:fixed;inset:0;background:rgba(15,23,42,.78);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(4px)}
+    #loading.on{display:flex}
+    .spin{width:52px;height:52px;border:4px solid rgba(255,255,255,.15);border-top-color:var(--indigo);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .load-txt{color:var(--white);font-size:.93rem;font-weight:500}
+    .load-sub{color:rgba(255,255,255,.5);font-size:.78rem}
 
-        .btn-predict:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
+    /* Alerts */
+    .alert-err{background:var(--rose-l);border:1px solid #fecdd3;border-radius:var(--r);padding:13px 17px;display:flex;gap:10px;margin-bottom:22px;color:#881337;font-size:.88rem}
+    .alert-err i{flex-shrink:0;margin-top:2px}
 
-        .result-card {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            text-align: center;
-            animation: fadeInUp 0.6s ease-out;
-        }
+    /* RESULTS */
+    .results{margin-top:30px;animation:fadeUp .5s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
+    /* Verdict */
+    .verdict{border-radius:var(--rl);padding:24px 28px;display:flex;align-items:center;gap:18px;margin-bottom:22px;flex-wrap:wrap}
+    .verdict.aff{background:linear-gradient(135deg,var(--rose-l),#fff1f2);border:1.5px solid #fecdd3}
+    .verdict.ok {background:linear-gradient(135deg,var(--green-l),#f0fdf4);border:1.5px solid #a7f3d0}
+    .v-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .aff .v-icon{background:var(--rose);color:var(--white)}
+    .ok  .v-icon{background:var(--green);color:var(--white)}
+    .v-text h3{font-size:1.3rem;font-weight:800}
+    .aff .v-text h3{color:#881337}
+    .ok  .v-text h3{color:#065f46}
+    .v-text p{font-size:.85rem;color:var(--gray-600);margin-top:2px}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* Severity badge */
+    .sev-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:50px;font-size:.78rem;font-weight:700;margin-top:6px;text-transform:uppercase;letter-spacing:.5px}
+    .sev-green {background:var(--green-l);color:#065f46}
+    .sev-teal  {background:var(--teal-l);color:#0c4a6e}
+    .sev-amber {background:#fef3c7;color:#78350f}
+    .sev-orange{background:#ffedd5;color:#7c2d12}
+    .sev-rose  {background:var(--rose-l);color:#881337}
 
-        .result-card h3 {
-            color: #2c3e50;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
+    /* Confidence ring */
+    .conf-block{margin-left:auto;text-align:center;min-width:110px}
+    .conf-lbl{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gray-400);margin-bottom:7px}
+    .conf-ring-wrap{position:relative;width:76px;height:76px;margin:0 auto}
+    .conf-ring{transform:rotate(-90deg)}
+    .crb{fill:none;stroke:var(--gray-200);stroke-width:7}
+    .crf{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+    .aff .crf{stroke:var(--rose)}
+    .ok  .crf{stroke:var(--green)}
+    .conf-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800}
 
-        .prediction-status {
-            display: inline-block;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
+    /* Combined risk */
+    .combined-risk-bar{margin-top:14px;padding:14px 18px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r)}
+    .combined-risk-bar h5{font-size:.85rem;font-weight:700;color:var(--gray-800);margin-bottom:10px}
+    .risk-track{height:10px;background:var(--gray-200);border-radius:10px;overflow:hidden;margin-bottom:6px}
+    .risk-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--green),var(--amber),var(--rose));transition:width 1s ease}
+    .risk-labels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--gray-400)}
+    .risk-info{font-size:.8rem;color:var(--gray-600);margin-top:6px}
 
-        .status-affected {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            color: #721c24;
-        }
+    /* Images */
+    .imgs-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .img-panel{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);overflow:hidden}
+    .img-ph{padding:10px 14px;font-size:.8rem;font-weight:600;color:var(--gray-600);border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:7px;background:var(--gray-50)}
+    .img-ph i{color:var(--indigo)}
+    .img-panel img{width:100%;display:block;cursor:zoom-in;transition:.3s}
+    .img-panel img:hover{transform:scale(1.02)}
+    .img-pf{padding:9px 14px;display:flex;justify-content:flex-end;background:var(--gray-50);border-top:1px solid var(--gray-100)}
+    .btn-dl{display:inline-flex;align-items:center;gap:5px;font-size:.76rem;font-weight:600;color:var(--indigo);text-decoration:none;background:var(--indigo-l);padding:5px 13px;border-radius:6px;transition:.2s}
+    .btn-dl:hover{background:#c7d2fe;color:var(--indigo);text-decoration:none}
 
-        .status-not-affected {
-            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc8 100%);
-            color: #155724;
-        }
+    /* Heatmap scale */
+    .hm-scale{margin-top:14px;padding:13px 16px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r)}
+    .hm-scale p{font-size:.78rem;color:var(--gray-600);margin-bottom:7px}
+    .hm-bar{height:10px;border-radius:10px;background:linear-gradient(90deg,#0000ff,#00ff00,#ff0000);margin-bottom:5px}
+    .hm-lbls{display:flex;justify-content:space-between;font-size:.7rem;color:var(--gray-400)}
 
-        .heatmap-section h4 {
-            color: #2c3e50;
-            font-weight: 600;
-            margin: 25px 0 15px 0;
-        }
+    /* Interpretation */
+    .interp{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r);padding:18px 22px;margin-top:18px}
+    .interp h4{font-size:.88rem;font-weight:700;color:var(--gray-800);margin-bottom:11px}
+    .interp ul{list-style:none;display:flex;flex-direction:column;gap:7px}
+    .interp ul li{font-size:.8rem;color:var(--gray-600);display:flex;align-items:flex-start;gap:7px}
+    .interp ul li i{flex-shrink:0;margin-top:2px}
 
-        .heatmap-image {
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease;
-        }
+    /* Feedback */
+    .fb-row{display:flex;align-items:center;gap:14px;margin-top:18px;padding:14px 18px;background:var(--white);border:1px solid var(--gray-200);border-radius:var(--r);flex-wrap:wrap}
+    .fb-row span{font-size:.85rem;color:var(--gray-600);font-weight:500}
+    .fb-btn{padding:7px 18px;border-radius:8px;border:1px solid;font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s}
+    .fb-yes{background:var(--green-l);border-color:#a7f3d0;color:#065f46}
+    .fb-yes:hover{background:#a7f3d0}
+    .fb-no {background:var(--rose-l);border-color:#fecdd3;color:#881337}
+    .fb-no:hover{background:#fecdd3}
+    .fb-stat{margin-left:auto;font-size:.76rem;color:var(--gray-400)}
+    .fb-done{display:none;font-size:.82rem;color:var(--green);font-weight:600;align-items:center;gap:6px}
 
-        .heatmap-image:hover {
-            transform: scale(1.02);
-        }
+    /* Download report */
+    .btn-report{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:linear-gradient(135deg,#f97316,#ef4444);color:var(--white);border:none;border-radius:var(--r);font-size:.85rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(249,115,22,.3);transition:.2s;text-decoration:none}
+    .btn-report:hover{opacity:.9;transform:translateY(-1px);color:var(--white);text-decoration:none}
+    .report-form{margin-top:14px}
 
-        .btn-download {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            border: none;
-            border-radius: 25px;
-            padding: 10px 25px;
-            font-weight: 600;
-            color: white;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-        }
+    /* Disclaimer */
+    .disclaimer{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--r);padding:13px 17px;display:flex;gap:9px;margin-top:18px;font-size:.79rem;color:#78350f}
+    .disclaimer i{color:var(--amber);flex-shrink:0;margin-top:2px}
 
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
-            color: white;
-            text-decoration: none;
-        }
+    /* FEATURES */
+    #features{background:var(--gray-900)}
+    #features .sec-lbl{color:#818cf8}
+    #features .sec-title{color:var(--white)}
+    #features .sec-sub{color:rgba(255,255,255,.5)}
+    #features .divider{background:linear-gradient(90deg,#818cf8,#38bdf8)}
+    .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px}
+    .feat-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:22px;transition:.2s}
+    .feat-card:hover{background:rgba(255,255,255,.08);border-color:rgba(130,124,248,.4);transform:translateY(-3px)}
+    .feat-card .fi{font-size:1.5rem;margin-bottom:12px}
+    .feat-card h4{font-size:.93rem;font-weight:700;color:var(--white);margin-bottom:7px}
+    .feat-card p{font-size:.8rem;color:rgba(255,255,255,.48)}
+    .fc-links{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+    .fc-link{display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:600;text-decoration:none;background:rgba(255,255,255,.1);border-radius:6px;padding:4px 12px;transition:.2s}
+    .fc-link:hover{background:rgba(255,255,255,.18);color:var(--white);text-decoration:none}
+    .fc-link.available{background:rgba(99,102,241,.25);color:#a5b4fc}
+    .fc-link.idea{background:rgba(245,158,11,.18);color:#fcd34d}
 
-        .alert-danger {
-            border-radius: 10px;
-            border: none;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            color: #721c24;
-        }
+    /* FOOTER */
+    footer{background:var(--gray-900);border-top:1px solid rgba(255,255,255,.07);padding:34px 32px;text-align:center}
+    footer p{font-size:.8rem;color:rgba(255,255,255,.35);margin-bottom:6px}
+    footer span{color:rgba(255,255,255,.55)}
 
-        @media (max-width: 768px) {
-            .main-container {
-                margin: 20px;
-                max-width: none;
-            }
+    /* LIGHTBOX */
+    #lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}
+    #lb.on{display:flex}
+    #lb img{max-width:90vw;max-height:90vh;border-radius:12px}
 
-            .header-section {
-                padding: 30px 20px;
-            }
+    /* ── HAMBURGER ── */
+    .hamburger{display:none;background:none;border:1px solid var(--gray-200);color:var(--indigo);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0}
 
-            .header-section h1 {
-                font-size: 2rem;
-            }
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      .nav-pill-row{gap:8px}
+      .nav-pill{padding:7px 14px;font-size:.78rem}
+    }
 
-            .content-section {
-                padding: 30px 20px;
-            }
-        }
-    </style>
+    @media(max-width:768px){
+      /* Nav */
+      nav{padding:0 16px;position:fixed}
+      .hamburger{display:flex;align-items:center;justify-content:center}
+      .nav-links{
+        display:none;flex-direction:column;gap:4px;
+        position:fixed;top:60px;left:0;right:0;
+        background:rgba(255,255,255,.97);backdrop-filter:blur(16px);
+        padding:12px 16px 18px;border-bottom:1px solid var(--gray-200);
+        box-shadow:0 6px 20px rgba(0,0,0,.1);z-index:199;
+      }
+      .nav-links.open{display:flex}
+      .nav-links a{padding:11px 14px;font-size:.92rem;border-radius:9px}
+      .nav-cta{text-align:center;justify-content:center}
+
+      /* Hero */
+      .hero{padding:80px 16px 56px;min-height:auto}
+      .hero h1{font-size:clamp(1.8rem,7vw,2.6rem);letter-spacing:-1px}
+      .hero p{font-size:.95rem;margin-bottom:28px}
+      .hero-stats{gap:20px}
+      .hero-stat .num{font-size:1.5rem}
+      .hero-badge{font-size:.72rem;padding:5px 14px}
+      .nav-pill-row{gap:8px;margin-bottom:30px}
+      .nav-pill{font-size:.76rem;padding:7px 14px}
+      .btn-hero{padding:13px 28px;font-size:.93rem}
+
+      /* Sections */
+      section{padding:52px 16px}
+      .sec-title{font-size:clamp(1.4rem,5vw,1.9rem)}
+
+      /* About */
+      .stats-row{grid-template-columns:1fr 1fr;gap:12px}
+      .sym-grid{grid-template-columns:1fr}
+      .sym-card{padding:14px}
+
+      /* XAI */
+      .xai-grid{grid-template-columns:1fr}
+      .xai-tabs{flex-direction:column;border-radius:var(--r)}
+      .xai-tab{border-right:none!important;border-bottom:1px solid var(--gray-200);padding:11px 10px}
+      .xai-tab:last-child{border-bottom:none}
+
+      /* Tool card */
+      .tool-card{padding:20px 16px}
+      .upload-zone{padding:28px 14px}
+      .sym-q-grid{grid-template-columns:1fr}
+
+      /* Results */
+      .imgs-row{grid-template-columns:1fr}
+      .verdict{flex-direction:column;text-align:center;padding:20px 18px}
+      .conf-block{margin-left:0}
+
+      /* Features */
+      .feat-grid{grid-template-columns:1fr}
+
+      /* Footer */
+      footer{padding:28px 16px}
+    }
+
+    @media(max-width:420px){
+      .stats-row{grid-template-columns:1fr}
+      .hero h1{font-size:1.7rem}
+      .hero-stats{gap:16px}
+    }
+  </style>
 </head>
-
 <body>
-    <div class="main-container">
-        <div class="header-section">
-            <h1><i class="fas fa-microscope"></i> PCOS Detection</h1>
-            <p>AI-Powered Ultrasound Image Analysis for Polycystic Ovary Syndrome</p>
-        </div>
 
-        <div class="content-section">
-            {% if error %}
-            <div class="alert alert-danger" role="alert">
-                <i class="fas fa-exclamation-triangle"></i> {{ error }}
-            </div>
-            {% endif %}
+<div id="lb"><img id="lb-img" src="" alt=""/></div>
 
-            <form method="post" enctype="multipart/form-data">
-                <div class="upload-card">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <label for="ultrasound_image">Select Ultrasound Image for Analysis</label>
-                    <input type="file" class="form-control-file" id="ultrasound_image" name="ultrasound_image"
-                        accept="image/*" required />
-                    <button type="submit" class="btn btn-predict mt-3">
-                        <i class="fas fa-brain"></i> Analyze Image
-                    </button>
-                </div>
-            </form>
+<div id="loading">
+  <div class="spin"></div>
+  <div class="load-txt">Analyzing image…</div>
+  <div class="load-sub" id="load-sub-txt">Running model prediction</div>
+</div>
 
-            {% if label %}
-            <div class="result-card">
-                <h3><i class="fas fa-chart-line"></i> Analysis Result</h3>
-                <div
-                    class="prediction-status {% if 'Not Affected' in label %}status-not-affected{% else %}status-affected{% endif %}">
-                    <i
-                        class="fas fa-{% if 'Not Affected' in label %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
-                    {{ label }}
-                </div>
-                {% if original_image_url %}
-                <div class="original-section">
-                    <h4><i class="fas fa-image"></i> Original Image</h4>
-                    <img src="{{ original_image_url }}" alt="Original Ultrasound Image" class="img-fluid heatmap-image" />
-                </div>
-                {% endif %}
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#"><i class="fa-solid fa-dna"></i> PCOS<span>·AI</span></a>
+  <div class="nav-links" id="nav-links">
+    <a href="#about">About PCOS</a>
+    <a href="#xai">How It Works</a>
+    <a href="/batch"><i class="fa-solid fa-layer-group"></i> Batch</a>
+    <a href="/compare"><i class="fa-solid fa-code-compare"></i> Compare</a>
+    <a href="/history"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+    <a href="#analyze" class="nav-cta"><i class="fa-solid fa-microscope"></i> Analyze</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+    {% if current_user.is_authenticated %}
+      <a href="/history" class="user-chip">
+        {% if current_user.picture %}
+        <img src="{{ current_user.picture }}" class="user-avatar" alt="avatar"/>
+        {% else %}
+        <div class="user-avatar-placeholder">{{ current_user.name[0]|upper }}</div>
+        {% endif %}
+        <span class="d-none d-sm-inline">{{ current_user.name.split()[0] }}</span>
+      </a>
+      <a href="/logout" class="nav-logout" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></a>
+    {% else %}
+      <a href="/login" class="nav-sign-in"><i class="fa-brands fa-google"></i> Sign In</a>
+    {% endif %}
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars" id="hb-icon"></i></button>
+  </div>
+</nav>
 
-                {% if heatmap_image_url %}
-                <div class="heatmap-section">
-                    <h4><i class="fas fa-eye"></i> GradCAM Heatmap Visualization</h4>
-                    <img src="{{ heatmap_image_url }}"
-                         alt="GradCAM Heatmap" class="img-fluid heatmap-image" />
-                    <a href="{{ heatmap_image_url }}"
-                       download="heatmap.jpg"
-                       class="btn btn-download mt-3">
-                        <i class="fas fa-download"></i> Download Heatmap
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %}
-        </div>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-badge"><i class="fa-solid fa-circle-check"></i> MobileNet + Analytical CAM XAI</div>
+  <h1>AI-Powered <span>PCOS Detection</span><br/>from Ultrasound Images</h1>
+  <p>Upload an ovarian ultrasound for instant prediction with explainable heatmaps showing exactly what the AI focused on.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">1<span>in 10</span></div><div class="desc">Women Affected</div></div>
+    <div class="hero-stat"><div class="num">70<span>%</span></div><div class="desc">Go Undiagnosed</div></div>
+    <div class="hero-stat"><div class="num">&lt;5<span>s</span></div><div class="desc">Analysis Time</div></div>
+    <div class="hero-stat"><div class="num">3<span>×</span></div><div class="desc">XAI Methods</div></div>
+  </div>
+  <div class="nav-pill-row">
+    <a href="/batch"   class="nav-pill"><i class="fa-solid fa-layer-group"></i> Batch Analysis</a>
+    <a href="/compare" class="nav-pill"><i class="fa-solid fa-code-compare"></i> Compare 2 Images</a>
+    <a href="/history" class="nav-pill"><i class="fa-solid fa-clock-rotate-left"></i> View History</a>
+  </div>
+  <a href="#analyze" class="btn-hero"><i class="fa-solid fa-arrow-up-from-bracket"></i> Start Analysis</a>
+</section>
+
+<!-- ABOUT PCOS -->
+<section id="about">
+  <div class="si">
+    <p class="sec-lbl">Understanding the Condition</p>
+    <h2 class="sec-title">What is PCOS?</h2>
+    <div class="divider"></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="big js-counter" data-target="13">0</div><div class="lbl">% prevalence in reproductive-age women</div></div>
+      <div class="stat-card"><div class="big">116M</div><div class="lbl">women affected worldwide</div></div>
+      <div class="stat-card"><div class="big">#1</div><div class="lbl">leading cause of female infertility</div></div>
+      <div class="stat-card"><div class="big js-counter" data-target="3">0</div><div class="lbl">× higher risk of type 2 diabetes</div></div>
     </div>
+    <p class="sec-sub" style="margin-bottom:30px">Polycystic Ovary Syndrome (PCOS) is a hormonal disorder common among women of reproductive age. The ovaries develop small fluid-filled sacs (follicles) and may fail to regularly release eggs. Early detection through ultrasound imaging combined with clinical assessment is critical for effective management.</p>
+    <div class="sym-grid">
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-circle-dot"></i></div><div><h4>Polycystic Ovaries</h4><p>12+ follicles visible on ultrasound, typically 2–9 mm diameter.</p></div></div>
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-circle-nodes"></i></div><div><h4>Irregular Periods</h4><p>Infrequent, irregular or prolonged menstrual cycles (&gt;35 days).</p></div></div>
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-droplet"></i></div><div><h4>Hormonal Imbalance</h4><p>Excess androgens causing acne, hirsutism, and scalp hair thinning.</p></div></div>
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-weight-scale"></i></div><div><h4>Metabolic Issues</h4><p>Insulin resistance, weight gain, and elevated blood sugar risk.</p></div></div>
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-baby"></i></div><div><h4>Fertility Problems</h4><p>Difficulty conceiving due to irregular or absent ovulation cycles.</p></div></div>
+      <div class="sym-card"><div class="sym-icon"><i class="fa-solid fa-heart-pulse"></i></div><div><h4>Cardiovascular Risk</h4><p>Elevated risk of hypertension, dyslipidemia, and heart disease.</p></div></div>
+    </div>
+    <div class="info-box"><i class="fa-solid fa-triangle-exclamation"></i><p><strong>Early detection matters.</strong> PCOS is manageable with lifestyle changes and medication when caught early. Regular ultrasound screening with AI-assisted analysis can dramatically improve detection rates and reduce the 70% who currently go undiagnosed.</p></div>
+  </div>
+</section>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- XAI -->
+<section id="xai">
+  <div class="si">
+    <p class="sec-lbl">Explainable AI</p>
+    <h2 class="sec-title">How the AI Explains Its Decision</h2>
+    <div class="divider"></div>
+    <div class="xai-grid">
+      <div class="xai-text">
+        <p>Traditional deep learning models are "black boxes" — they give predictions without explanation. In a medical context, clinicians need to understand <em>why</em> a model made a decision before trusting it.</p>
+        <p>This tool offers <strong>3 XAI methods</strong> you can choose from when analyzing an image:</p>
+        <ul class="benefit-list">
+          <li><i class="fa-solid fa-check-circle"></i><span><strong>Analytical CAM:</strong> Direct weight-to-feature-map mapping. Fast, saturation-free.</span></li>
+          <li><i class="fa-solid fa-check-circle"></i><span><strong>Saliency Map:</strong> Pixel-level gradient of the logit w.r.t. input pixels. Highlights fine texture.</span></li>
+          <li><i class="fa-solid fa-check-circle"></i><span><strong>Integrated Gradients:</strong> Accumulates gradients along the interpolation path from a blank baseline. Most theoretically rigorous.</span></li>
+          <li><i class="fa-solid fa-check-circle"></i><span><strong>All three</strong> use a logit-domain trick to bypass sigmoid saturation, ensuring valid heatmaps even for highly confident predictions.</span></li>
+        </ul>
+      </div>
+      <div class="gv-box">
+        <h4 style="font-size:.88rem;font-weight:700;color:var(--gray-800);margin-bottom:18px">CAM Pipeline — Step by Step</h4>
+        <div class="flow-step"><div class="step-num">1</div><div class="step-text"><h5>Preprocessing</h5><p>Resize to 224×224, apply MobileNet normalization (−1 to +1).</p></div></div>
+        <div class="flow-step"><div class="step-num">2</div><div class="step-text"><h5>Feature Extraction</h5><p>MobileNet produces a 7×7×1024 spatial feature map.</p></div></div>
+        <div class="flow-step"><div class="step-num">3</div><div class="step-text"><h5>Weight Mapping</h5><p>Dense layer weights (50,176) reshaped to 7×7×1024 spatial form.</p></div></div>
+        <div class="flow-step"><div class="step-num">4</div><div class="step-text"><h5>Contribution Score</h5><p>Σ(feature × weight) per spatial cell → class-signed ReLU.</p></div></div>
+        <div class="flow-step"><div class="step-num">5</div><div class="step-text"><h5>Heatmap Overlay</h5><p>Upsampled to 224×224, JET colormap, blended 50/50 with original.</p></div></div>
+        <div class="leg-row">
+          <div class="leg-item"><div class="leg-dot" style="background:#0000ff"></div>Low relevance</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#00ff00"></div>Medium</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#ff0000"></div>High relevance</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYZE -->
+<section id="analyze">
+  <div class="si">
+    <p class="sec-lbl">AI Analysis Tool</p>
+    <h2 class="sec-title">Upload an Ultrasound Image</h2>
+    <div class="divider"></div>
+    <p class="sec-sub" style="margin-bottom:34px">Supports JPG, PNG, WEBP. For best results use a clear ovarian ultrasound showing the full cross-section. Optionally add symptom data for a combined risk score.</p>
+
+    {% if error %}
+    <div class="alert-err"><i class="fa-solid fa-circle-exclamation"></i><span>{{ error }}</span></div>
+    {% endif %}
+
+    <div class="tool-card">
+      <form method="post" enctype="multipart/form-data" id="upload-form">
+
+        <!-- XAI method selector -->
+        <p style="font-size:.85rem;font-weight:700;color:var(--gray-700);margin-bottom:12px"><i class="fa-solid fa-brain" style="color:var(--indigo)"></i> &nbsp;Choose XAI Explanation Method</p>
+        {% set active_xai = result.xai_method if result else 'cam' %}
+        <div class="xai-tabs" role="group">
+          <button type="button" class="xai-tab {% if active_xai == 'cam' %}active{% endif %}"      data-val="cam"      onclick="setXai('cam',this)">Analytical CAM</button>
+          <button type="button" class="xai-tab {% if active_xai == 'saliency' %}active{% endif %}" data-val="saliency" onclick="setXai('saliency',this)">Saliency Map</button>
+          <button type="button" class="xai-tab {% if active_xai == 'ig' %}active{% endif %}"       data-val="ig"       onclick="setXai('ig',this)">Integrated Gradients</button>
+        </div>
+        <div class="xai-tab-desc" id="xai-desc"></div>
+        <input type="hidden" name="xai_method" id="xai-input" value="{{ active_xai }}"/>
+
+        <!-- Upload zone -->
+        <div class="upload-zone" id="drop-zone">
+          <i class="fa-solid fa-cloud-arrow-up u-icon"></i>
+          <div class="u-title">Drag &amp; drop your ultrasound image here</div>
+          <div class="u-hint">or <span class="browse-link" id="browse-btn">browse files</span> &nbsp;·&nbsp; JPG / PNG / WEBP</div>
+          <input type="file" id="file-input" name="ultrasound_image" accept="image/*" required/>
+        </div>
+
+        <div id="preview-wrap">
+          <div class="prev-inner">
+            <img id="prev-thumb" src="#" alt="preview"/>
+            <div class="prev-meta"><h5 id="prev-name">file.jpg</h5><span id="prev-size">0 KB</span></div>
+            <button type="button" class="rm-btn" id="rm-btn" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        </div>
+
+        <!-- Symptom questionnaire (collapsible) -->
+        <div class="sym-toggle" id="sym-toggle" onclick="toggleSym()">
+          <span><i class="fa-solid fa-clipboard-list" style="color:var(--indigo)"></i> Optional: Symptom Assessment — get a combined risk score</span>
+          <i class="fa-solid fa-chevron-down arrow" id="sym-arrow"></i>
+        </div>
+        <div class="sym-panel" id="sym-panel">
+          <p style="font-size:.8rem;color:var(--gray-500);margin-bottom:14px">Check all symptoms you are currently experiencing. These are combined (30% weight) with the image prediction (70% weight) to produce a combined risk score.</p>
+          <div class="sym-q-grid">
+            {% for key, label in symptoms %}
+            <div class="sym-q">
+              <input type="checkbox" name="{{ key }}" id="{{ key }}" value="yes"/>
+              <label for="{{ key }}">{{ label }}</label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn-analyze" id="analyze-btn" disabled>
+          <i class="fa-solid fa-brain"></i> Analyze Image
+        </button>
+      </form>
+
+      <!-- ── RESULTS ── -->
+      {% if result %}
+      <div class="results" id="results">
+
+        <!-- Verdict -->
+        <div class="verdict {{ 'aff' if result.label == 'Affected' else 'ok' }}">
+          <div class="v-icon"><i class="fa-solid fa-{{ 'triangle-exclamation' if result.label == 'Affected' else 'check' }}"></i></div>
+          <div class="v-text">
+            <h3>{{ result.label }}</h3>
+            <p>{{ result.sev_desc }}</p>
+            <div class="sev-badge sev-{{ result.sev_color }}">
+              <i class="fa-solid fa-circle" style="font-size:.5rem"></i> {{ result.severity }}
+            </div>
+          </div>
+          <div class="conf-block">
+            <div class="conf-lbl">Confidence</div>
+            <div class="conf-ring-wrap">
+              <svg class="conf-ring" width="76" height="76" viewBox="0 0 76 76">
+                <circle class="crb" cx="38" cy="38" r="31"/>
+                <circle class="crf" cx="38" cy="38" r="31"
+                  stroke-dasharray="194.8"
+                  stroke-dashoffset="{{ ((100 - result.confidence) / 100 * 194.8)|round(1) }}"/>
+              </svg>
+              <div class="conf-num">{{ result.confidence }}%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Combined risk bar -->
+        {% if result.combined_risk is not none %}
+        <div class="combined-risk-bar">
+          <h5><i class="fa-solid fa-chart-pie" style="color:var(--indigo)"></i> &nbsp;Combined Risk Score (Image + Symptoms)</h5>
+          <div class="risk-track"><div class="risk-fill" style="width:{{ result.combined_risk }}%"></div></div>
+          <div class="risk-labels"><span>0% Low</span><span>50%</span><span>100% High</span></div>
+          <div class="risk-info">
+            <strong>{{ result.combined_risk }}%</strong> combined risk &nbsp;·&nbsp;
+            {{ result.symptom_count }}/{{ symptoms|length }} symptoms reported &nbsp;·&nbsp;
+            Image weight 70%, Symptoms weight 30%
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Images -->
+        <div class="imgs-row" style="margin-top:18px">
+          <div class="img-panel">
+            <div class="img-ph"><i class="fa-solid fa-image"></i> Original Ultrasound</div>
+            <img src="{{ result.orig_url }}" alt="Original" onclick="openLb(this.src)"/>
+            <div class="img-pf"><a href="{{ result.orig_url }}" download="ultrasound_original.jpg" class="btn-dl"><i class="fa-solid fa-download"></i> Download</a></div>
+          </div>
+          <div class="img-panel">
+            <div class="img-ph"><i class="fa-solid fa-fire"></i> {{ {'cam':'CAM','saliency':'Saliency Map','ig':'Integrated Gradients'}[result.xai_method] }} Heatmap</div>
+            <img src="{{ result.heatmap_url }}" alt="Heatmap" onclick="openLb(this.src)"/>
+            <div class="img-pf"><a href="{{ result.heatmap_url }}" download="pcos_heatmap.jpg" class="btn-dl"><i class="fa-solid fa-download"></i> Download</a></div>
+          </div>
+        </div>
+
+        <!-- Heatmap scale -->
+        <div class="hm-scale">
+          <p><i class="fa-solid fa-palette"></i> &nbsp;Heatmap Color Scale — <strong>red/yellow</strong> regions had the highest influence on the prediction.</p>
+          <div class="hm-bar"></div>
+          <div class="hm-lbls"><span>Low influence</span><span>Medium</span><span>High influence</span></div>
+        </div>
+
+        <!-- Interpretation -->
+        <div class="interp">
+          <h4><i class="fa-solid fa-magnifying-glass-chart"></i> &nbsp;Interpreting These Results</h4>
+          <ul>
+            <li><i class="fa-solid fa-circle" style="color:var(--rose);font-size:.5rem;margin-top:5px"></i><span><strong>Red/yellow zones</strong> — regions with highest model attention. In PCOS cases these typically correspond to follicular clusters on the ovarian periphery.</span></li>
+            <li><i class="fa-solid fa-circle" style="color:#00b7ff;font-size:.5rem;margin-top:5px"></i><span><strong>Blue zones</strong> — contributed minimally. Usually areas outside the ovarian tissue or homogeneous background.</span></li>
+            <li><i class="fa-solid fa-circle" style="color:var(--amber);font-size:.5rem;margin-top:5px"></i><span>The <strong>confidence score</strong> reflects model certainty — near 100% means the model sees a clear signal. Lower scores indicate borderline cases that need extra clinical evaluation.</span></li>
+            <li><i class="fa-solid fa-circle" style="color:var(--indigo);font-size:.5rem;margin-top:5px"></i><span><strong>Click either image</strong> to zoom. Use the XAI method selector above to re-analyze with a different visualization technique.</span></li>
+          </ul>
+        </div>
+
+        <!-- Feedback row -->
+        <div class="fb-row" id="fb-row">
+          <span><i class="fa-solid fa-comment-dots" style="color:var(--indigo)"></i> Was this prediction correct?</span>
+          <button class="fb-btn fb-yes" onclick="sendFeedback(true)"><i class="fa-solid fa-thumbs-up"></i> Yes, correct</button>
+          <button class="fb-btn fb-no"  onclick="sendFeedback(false)"><i class="fa-solid fa-thumbs-down"></i> No, incorrect</button>
+          <span class="fb-stat" id="fb-stat">
+            {% set fb = feedback %}
+            {{ fb.correct }} correct / {{ fb.total }} total
+          </span>
+          <div class="fb-done" id="fb-done"><i class="fa-solid fa-check-circle"></i> Thanks for the feedback!</div>
+        </div>
+
+        <!-- PDF report download -->
+        <div class="report-form">
+          <form method="post" action="/download-report" target="_blank" id="report-form">
+            <input type="hidden" name="label"         value="{{ result.label }}"/>
+            <input type="hidden" name="confidence"    value="{{ result.confidence }}"/>
+            <input type="hidden" name="severity"      value="{{ result.severity }}"/>
+            <input type="hidden" name="sev_desc"      value="{{ result.sev_desc }}"/>
+            <input type="hidden" name="raw_pred"      value="{{ result.raw_pred }}"/>
+            <input type="hidden" name="orig_url"      value="{{ result.orig_url }}"/>
+            <input type="hidden" name="heatmap_url"   value="{{ result.heatmap_url }}"/>
+            {% if result.symptom_count is not none %}
+            <input type="hidden" name="symptom_count" value="{{ result.symptom_count }}"/>
+            <input type="hidden" name="combined_risk" value="{{ result.combined_risk }}"/>
+            {% endif %}
+            <button type="submit" class="btn-report"><i class="fa-solid fa-file-pdf"></i> Download PDF Clinical Report</button>
+          </form>
+        </div>
+
+        <div class="disclaimer"><i class="fa-solid fa-triangle-exclamation"></i><span><strong>Medical Disclaimer:</strong> This tool is for research and educational purposes only. It is NOT a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.</span></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES / ROADMAP -->
+<section id="features">
+  <div class="si">
+    <p class="sec-lbl">What's Implemented</p>
+    <h2 class="sec-title">All Features at a Glance</h2>
+    <div class="divider"></div>
+    <p class="sec-sub" style="color:rgba(255,255,255,.5);margin-bottom:38px">Every feature from the roadmap is now live — click the links to try them.</p>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="fi">📊</div><h4>3 XAI Methods</h4><p>Analytical CAM, Vanilla Saliency, and Integrated Gradients. Selectable per analysis.</p><div class="fc-links"><a href="#analyze" class="fc-link available">✓ Live — use above</a></div></div>
+      <div class="feat-card"><div class="fi">🎚️</div><h4>5-Level Severity</h4><p>Clear → Low → Borderline → Moderate → High Risk based on raw model output score.</p><div class="fc-links"><a href="#analyze" class="fc-link available">✓ Live — use above</a></div></div>
+      <div class="feat-card"><div class="fi">📝</div><h4>Symptom Questionnaire</h4><p>6-symptom assessment combined with image score (70/30 weighting) for a composite risk metric.</p><div class="fc-links"><a href="#analyze" class="fc-link available">✓ Live — use above</a></div></div>
+      <div class="feat-card"><div class="fi">📄</div><h4>PDF Clinical Report</h4><p>Downloadable report with images, heatmap, prediction, severity, and interpretation.</p><div class="fc-links"><a href="#analyze" class="fc-link available">✓ Live — analyze first</a></div></div>
+      <div class="feat-card"><div class="fi">📦</div><h4>Batch Analysis</h4><p>Upload a ZIP of up to 20 ultrasound images. Get a full results table with per-image prediction and severity.</p><div class="fc-links"><a href="/batch" class="fc-link available">✓ Live — open Batch</a></div></div>
+      <div class="feat-card"><div class="fi">🔁</div><h4>Comparison Mode</h4><p>Upload two images side-by-side. Compare predictions, heatmaps, and severity in a single view.</p><div class="fc-links"><a href="/compare" class="fc-link available">✓ Live — open Compare</a></div></div>
+      <div class="feat-card"><div class="fi">📜</div><h4>Analysis History</h4><p>Last 50 analyses stored with timestamp, label, confidence, severity, and XAI method used.</p><div class="fc-links"><a href="/history" class="fc-link available">✓ Live — open History</a></div></div>
+      <div class="feat-card"><div class="fi">👍</div><h4>Prediction Feedback</h4><p>One-click thumbs up/down after each analysis. Aggregate accuracy visible in real time.</p><div class="fc-links"><a href="#analyze" class="fc-link available">✓ Live — use above</a></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="font-size:.9rem;color:rgba(255,255,255,.65);margin-bottom:6px"><strong style="color:var(--white)">PCOS·AI</strong> — Explainable AI for Ovarian Ultrasound Analysis</p>
+  <p>MobileNet · TensorFlow · Analytical CAM · Integrated Gradients · Flask · fpdf2</p>
+  <p style="margin-top:10px">For research &amp; educational use only · Not a medical device</p>
+</footer>
+
+<script>
+  const XAI_DESC = {
+    cam:      'Fast · Spatial feature contribution · Analytical (no saturation issue)',
+    saliency: 'Fast · Pixel-level gradient of logit w.r.t. input · Highlights fine texture',
+    ig:       'Slower (~3 s) · Integrated Gradients over 15 steps · Most theoretically rigorous'
+  };
+  const LOAD_SUB = {
+    cam:      'Running analytical CAM…',
+    saliency: 'Computing saliency gradients…',
+    ig:       'Running integrated gradients (15 steps)…'
+  };
+  // Initialise from the server-rendered value so the correct tab stays selected after POST
+  let currentXai = document.getElementById('xai-input').value || 'cam';
+  document.getElementById('xai-desc').textContent = XAI_DESC[currentXai] || XAI_DESC.cam;
+
+  function setXai(val, el) {
+    currentXai = val;
+    document.querySelectorAll('.xai-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('xai-input').value = val;
+    document.getElementById('xai-desc').textContent = XAI_DESC[val];
+  }
+
+  /* Upload & preview */
+  const dropZone  = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const prevWrap  = document.getElementById('preview-wrap');
+  const prevThumb = document.getElementById('prev-thumb');
+  const prevName  = document.getElementById('prev-name');
+  const prevSize  = document.getElementById('prev-size');
+  const analyzeBtn= document.getElementById('analyze-btn');
+  const form      = document.getElementById('upload-form');
+  const loading   = document.getElementById('loading');
+
+  document.getElementById('browse-btn').addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('click', e => { if (!e.target.closest('#preview-wrap') && e.target !== fileInput) fileInput.click(); });
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) { fileInput.files = e.dataTransfer.files; showPreview(e.dataTransfer.files[0]); }
+  });
+  fileInput.addEventListener('change', function () { if (this.files[0]) showPreview(this.files[0]); });
+
+  function showPreview(file) {
+    const r = new FileReader();
+    r.onload = e => {
+      prevThumb.src = e.target.result;
+      prevName.textContent = file.name;
+      prevSize.textContent = (file.size / 1024).toFixed(1) + ' KB';
+      prevWrap.style.display = 'block';
+      analyzeBtn.disabled = false;
+    };
+    r.readAsDataURL(file);
+  }
+  document.getElementById('rm-btn').addEventListener('click', () => {
+    fileInput.value = '';
+    prevWrap.style.display = 'none';
+    analyzeBtn.disabled = true;
+  });
+
+  form.addEventListener('submit', () => {
+    loading.classList.add('on');
+    document.getElementById('load-sub-txt').textContent = LOAD_SUB[currentXai] || 'Processing…';
+    analyzeBtn.disabled = true;
+    analyzeBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Analyzing…';
+  });
+
+  /* Symptom panel */
+  function toggleSym() {
+    const panel = document.getElementById('sym-panel');
+    const arrow = document.getElementById('sym-arrow');
+    panel.classList.toggle('open');
+    arrow.style.transform = panel.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  /* Scroll to results after POST */
+  {% if result %}
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('results')?.scrollIntoView({behavior:'smooth',block:'start'}), 200);
+  });
+  {% endif %}
+
+  /* Lightbox */
+  function openLb(src) { document.getElementById('lb-img').src = src; document.getElementById('lb').classList.add('on'); }
+  document.getElementById('lb').addEventListener('click', () => document.getElementById('lb').classList.remove('on'));
+
+  /* Feedback */
+  function sendFeedback(correct) {
+    const label = '{{ result.label if result else "" }}';
+    fetch('/feedback', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({label, correct})
+    }).then(r => r.json()).then(d => {
+      document.getElementById('fb-stat').style.display = 'none';
+      document.querySelectorAll('.fb-btn').forEach(b => b.style.display = 'none');
+      const done = document.getElementById('fb-done');
+      done.style.display = 'flex';
+      done.textContent = `✓ Thanks! Accuracy so far: ${d.correct}/${d.total} correct`;
+    });
+  }
+
+  /* Animated counters */
+  const counters = document.querySelectorAll('.js-counter');
+  const ob = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target, target = +el.dataset.target;
+      let val = 0;
+      const t = setInterval(() => {
+        val = Math.min(val + target / 40, target);
+        el.textContent = Math.round(val);
+        if (val >= target) clearInterval(t);
+      }, 30);
+      ob.unobserve(el);
+    });
+  }, {threshold: .5});
+  counters.forEach(c => ob.observe(c));
+
+  /* Hamburger nav */
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+  const hbIcon    = document.getElementById('hb-icon');
+  hamburger?.addEventListener('click', () => {
+    const open = navLinks.classList.toggle('open');
+    hbIcon.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+  });
+  /* Close nav when a link is clicked */
+  navLinks?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    hbIcon.className = 'fa-solid fa-bars';
+  }));
+</script>
 </body>
-
 </html>

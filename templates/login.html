@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sign In — PCOS·AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1a1040 55%,#0c1a3a 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{background:#fff;border-radius:20px;padding:44px 40px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.35);text-align:center}
+    .logo{font-size:1.5rem;font-weight:800;color:#4f46e5;letter-spacing:-.5px;margin-bottom:6px}
+    .logo span{color:#0ea5e9}
+    .subtitle{font-size:.85rem;color:#94a3b8;margin-bottom:32px}
+    h1{font-size:1.55rem;font-weight:800;color:#0f172a;letter-spacing:-.5px;margin-bottom:8px}
+    .desc{font-size:.88rem;color:#475569;margin-bottom:32px;line-height:1.6}
+    .btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 20px;background:#fff;border:1.5px solid #e2e8f0;border-radius:12px;font-size:.95rem;font-weight:600;color:#1e293b;text-decoration:none;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .btn-google:hover{border-color:#4f46e5;background:#f8f7ff;box-shadow:0 4px 16px rgba(79,70,229,.15);color:#1e293b;text-decoration:none}
+    .btn-google img{width:22px;height:22px}
+    .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:#94a3b8;font-size:.8rem}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:#e2e8f0}
+    .guest-link{display:block;color:#94a3b8;font-size:.82rem;text-decoration:none;transition:.2s}
+    .guest-link:hover{color:#4f46e5}
+    .features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;text-align:left}
+    .feat-item{display:flex;align-items:center;gap:8px;font-size:.78rem;color:#475569}
+    .feat-item i{color:#10b981;font-size:.72rem;flex-shrink:0}
+    .alert{background:#ffe4e6;border:1px solid #fecdd3;border-radius:10px;padding:11px 15px;font-size:.83rem;color:#881337;margin-bottom:20px;text-align:left;display:flex;gap:8px;align-items:flex-start}
+    .alert i{flex-shrink:0;margin-top:2px}
+    .back{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:#94a3b8;text-decoration:none;margin-bottom:24px;transition:.2s}
+    .back:hover{color:#4f46e5;text-decoration:none}
+  </style>
+</head>
+<body>
+<div class="card">
+  <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i> Back to app</a>
+  <div class="logo"><i class="fa-solid fa-dna"></i> PCOS<span>·AI</span></div>
+  <div class="subtitle">Explainable Ultrasound Analysis</div>
+  <h1>Sign in to your account</h1>
+  <p class="desc">Sign in to save your analysis history privately. Each user's data is kept separate and only accessible to them.</p>
+
+  {% with msgs = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in msgs %}
+  <div class="alert"><i class="fa-solid fa-circle-exclamation"></i> {{ msg }}</div>
+  {% endfor %}
+  {% endwith %}
+
+  <div class="features">
+    <div class="feat-item"><i class="fa-solid fa-check-circle"></i> Private history</div>
+    <div class="feat-item"><i class="fa-solid fa-check-circle"></i> Up to 50 analyses</div>
+    <div class="feat-item"><i class="fa-solid fa-check-circle"></i> Secure storage</div>
+    <div class="feat-item"><i class="fa-solid fa-check-circle"></i> No password needed</div>
+  </div>
+
+  <a href="/auth/google" class="btn-google">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+    Continue with Google
+  </a>
+
+  <div class="divider">or</div>
+  <a href="/" class="guest-link"><i class="fa-solid fa-user-secret"></i> Continue as guest (history not saved)</a>
+</div>
+</body>
+</html>
