@@ -28,9 +28,26 @@
     .alert i{flex-shrink:0;margin-top:2px}
     .back{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:#94a3b8;text-decoration:none;margin-bottom:24px;transition:.2s}
     .back:hover{color:#4f46e5;text-decoration:none}
+    .theme-toggle-login{position:fixed;top:16px;right:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:8px;padding:7px 11px;cursor:pointer;font-size:.9rem;transition:.2s;backdrop-filter:blur(8px)}
+    .theme-toggle-login:hover{background:rgba(255,255,255,.18)}
+    [data-theme="dark"] .card{background:#1e293b;color:#e2e8f0;box-shadow:0 24px 64px rgba(0,0,0,.6)}
+    [data-theme="dark"] h1{color:#e2e8f0}
+    [data-theme="dark"] .desc{color:#94a3b8}
+    [data-theme="dark"] .feat-item{color:#94a3b8}
+    [data-theme="dark"] .btn-google{background:#0f172a;border-color:#334155;color:#e2e8f0}
+    [data-theme="dark"] .btn-google:hover{background:#1e3058;border-color:#4f46e5}
+    [data-theme="dark"] .divider{color:#475569}
+    [data-theme="dark"] .divider::before,[data-theme="dark"] .divider::after{background:#334155}
+    [data-theme="dark"] .guest-link{color:#64748b}
+    [data-theme="dark"] .guest-link:hover{color:#818cf8}
+    [data-theme="dark"] .back{color:#64748b}
+    [data-theme="dark"] .back:hover{color:#818cf8}
+    .card{transition:background .25s,color .25s}
   </style>
 </head>
+<script>(function(){const t=localStorage.getItem('pcos-theme')||'light';document.documentElement.setAttribute('data-theme',t)})();</script>
 <body>
+<button class="theme-toggle-login" onclick="toggleTheme()" aria-label="Toggle dark mode"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
 <div class="card">
   <a href="/" class="back"><i class="fa-solid fa-arrow-left"></i> Back to app</a>
   <div class="logo"><i class="fa-solid fa-dna"></i> PCOS<span>·AI</span></div>
@@ -59,5 +76,9 @@
   <div class="divider">or</div>
   <a href="/" class="guest-link"><i class="fa-solid fa-user-secret"></i> Continue as guest (history not saved)</a>
 </div>
+<script>
+  function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';const n=d?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('pcos-theme',n);document.getElementById('theme-icon').className=d?'fa-solid fa-moon':'fa-solid fa-sun';}
+  (function(){if(document.documentElement.getAttribute('data-theme')==='dark')document.getElementById('theme-icon').className='fa-solid fa-sun';})();
+</script>
 </body>
 </html>

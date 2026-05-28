@@ -122,8 +122,36 @@
       .cmp-banner{flex-direction:column;gap:8px}
       .verdict-mini{flex-direction:column;text-align:center;padding:14px}
     }
+    .theme-toggle{background:none;border:1px solid var(--gray-200);color:var(--gray-600);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.9rem;transition:.2s;line-height:1}
+    .theme-toggle:hover{background:var(--gray-100);color:var(--indigo)}
+    [data-theme="dark"]{--gray-50:#0f172a;--gray-100:#1e293b;--gray-200:#334155;--gray-400:#64748b;--gray-600:#94a3b8;--gray-800:#e2e8f0;--gray-900:#f8fafc;--white:#1e293b;color-scheme:dark}
+    [data-theme="dark"] body{background:#0f172a;color:#e2e8f0}
+    [data-theme="dark"] nav{background:rgba(15,23,42,.92)!important;border-color:#334155}
+    [data-theme="dark"] .nav-links{background:rgba(15,23,42,.97)!important;border-color:#334155}
+    [data-theme="dark"] .nav-links a{color:#94a3b8}
+    [data-theme="dark"] .nav-links a:hover,[data-theme="dark"] .nav-links a.active{background:#1e293b;color:#818cf8}
+    [data-theme="dark"] .nav-brand{color:#818cf8}
+    [data-theme="dark"] .nav-sign-in,[data-theme="dark"] .user-chip{background:#1e293b;border-color:#334155;color:#e2e8f0}
+    [data-theme="dark"] .hamburger,[data-theme="dark"] .theme-toggle{background:#1e293b;border-color:#334155;color:#94a3b8}
+    [data-theme="dark"] .main{background:#0f172a}
+    [data-theme="dark"] .upload-card,[data-theme="dark"] .result-col{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .col-header{background:#0f172a;border-color:#334155;color:#94a3b8}
+    [data-theme="dark"] .upload-zone{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .upload-zone:hover{background:#1e3058;border-color:var(--indigo)}
+    [data-theme="dark"] .prev-inner{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .verdict-mini.aff{background:#2d1218;border-color:#7f1d1d}
+    [data-theme="dark"] .verdict-mini.ok{background:#0a2318;border-color:#065f46}
+    [data-theme="dark"] .conf-track{background:#334155}
+    [data-theme="dark"] .img-lbl{color:#64748b}
+    [data-theme="dark"] .cmp-banner.both-same{background:#0a2318;border-color:#065f46;color:#6ee7b7}
+    [data-theme="dark"] .cmp-banner.differ{background:#1c1205;border-color:#92400e;color:#fcd34d}
+    [data-theme="dark"] .alert-err{background:#2d1218;border-color:#7f1d1d;color:#fca5a5}
+    [data-theme="dark"] .aff .vt h4{color:#fca5a5}
+    [data-theme="dark"] .ok .vt h4{color:#6ee7b7}
+    body,nav,.upload-card,.result-col,.upload-zone{transition:background .25s,border-color .25s,color .25s}
   </style>
 </head>
+<script>(function(){const t=localStorage.getItem('pcos-theme')||'light';document.documentElement.setAttribute('data-theme',t)})();</script>
 <body>
 <div id="lb"><img id="lb-img" src="" alt=""/></div>
 <div id="loading"><div class="spin"></div><div class="load-txt">Analyzing both images…</div></div>
@@ -147,6 +175,7 @@
     {% else %}
       <a href="/login" class="nav-sign-in"><i class="fa-brands fa-google"></i> Sign In</a>
     {% endif %}
+    <button class="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars" id="hb-icon"></i></button>
   </div>
 </nav>
@@ -330,6 +359,8 @@
   navLinks?.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     navLinks.classList.remove('open'); hbIcon.className = 'fa-solid fa-bars';
   }));
+  function toggleTheme(){const d=document.documentElement.getAttribute('data-theme')==='dark';const n=d?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('pcos-theme',n);document.getElementById('theme-icon').className=d?'fa-solid fa-moon':'fa-solid fa-sun';}
+  (function(){if(document.documentElement.getAttribute('data-theme')==='dark')document.getElementById('theme-icon').className='fa-solid fa-sun';})();
 </script>
 </body>
 </html>

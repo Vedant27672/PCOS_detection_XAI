@@ -332,8 +332,70 @@
       .hero h1{font-size:1.7rem}
       .hero-stats{gap:16px}
     }
+
+    /* ── THEME TOGGLE ── */
+    .theme-toggle{background:none;border:1px solid var(--gray-200);color:var(--gray-600);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:.9rem;transition:.2s;line-height:1;flex-shrink:0}
+    .theme-toggle:hover{background:var(--gray-100);color:var(--indigo)}
+
+    /* ── DARK MODE ── */
+    [data-theme="dark"]{
+      --gray-50:#0f172a;--gray-100:#1e293b;--gray-200:#334155;
+      --gray-400:#64748b;--gray-600:#94a3b8;--gray-800:#e2e8f0;
+      --gray-900:#f8fafc;--white:#1e293b;
+      color-scheme:dark
+    }
+    [data-theme="dark"] body{background:#0f172a;color:#e2e8f0}
+    [data-theme="dark"] nav{background:rgba(15,23,42,.92)!important;border-color:#334155}
+    [data-theme="dark"] .nav-links{background:rgba(15,23,42,.97)!important;border-color:#334155}
+    [data-theme="dark"] .nav-links a{color:#94a3b8}
+    [data-theme="dark"] .nav-links a:hover,[data-theme="dark"] .nav-links a.active{background:#1e293b;color:#818cf8}
+    [data-theme="dark"] .nav-cta{color:#fff!important}
+    [data-theme="dark"] .nav-brand{color:#818cf8}
+    [data-theme="dark"] .nav-sign-in{background:#1e293b;border-color:#334155;color:#94a3b8}
+    [data-theme="dark"] .user-chip{background:#1e293b;border-color:#334155;color:#e2e8f0}
+    [data-theme="dark"] .hamburger,[data-theme="dark"] .theme-toggle{background:#1e293b;border-color:#334155;color:#94a3b8}
+    [data-theme="dark"] #about,[data-theme="dark"] #analyze{background:#1e293b}
+    [data-theme="dark"] #xai{background:#0f172a}
+    [data-theme="dark"] section.hero{background:linear-gradient(135deg,#020617 0%,#0d0a28 55%,#060d1f 100%)}
+    [data-theme="dark"] #features{background:#020617}
+    [data-theme="dark"] footer{background:#020617}
+    [data-theme="dark"] .stat-card{background:linear-gradient(135deg,#1e293b,#1e1b4b);border-color:rgba(99,102,241,.18)}
+    [data-theme="dark"] .sym-card{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .sym-card:hover{border-color:var(--indigo);background:#1e293b}
+    [data-theme="dark"] .info-box{background:#1c1205;border-color:#78350f}
+    [data-theme="dark"] .info-box p{color:#fcd34d}
+    [data-theme="dark"] .gv-box{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .flow-step{border-color:#334155}
+    [data-theme="dark"] .xai-tabs{border-color:#334155}
+    [data-theme="dark"] .xai-tab{background:#1e293b;border-color:#334155;color:#94a3b8}
+    [data-theme="dark"] .xai-tab.active{background:var(--indigo);color:#fff}
+    [data-theme="dark"] .tool-card{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .upload-zone{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .upload-zone:hover,[data-theme="dark"] .upload-zone.drag-over{background:#1e3058;border-color:var(--indigo)}
+    [data-theme="dark"] .prev-inner{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .sym-toggle{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .sym-toggle:hover{background:#1e3058}
+    [data-theme="dark"] .sym-panel{background:#1e293b;border-color:#334155;border-top-color:#334155}
+    [data-theme="dark"] .sym-q{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .sym-q:hover{background:#1e3058;border-color:var(--indigo)}
+    [data-theme="dark"] .verdict.aff{background:linear-gradient(135deg,#2d1218,#3d1520);border-color:#7f1d1d}
+    [data-theme="dark"] .verdict.ok{background:linear-gradient(135deg,#0a2318,#0d2e1f);border-color:#065f46}
+    [data-theme="dark"] .combined-risk-bar,[data-theme="dark"] .hm-scale,[data-theme="dark"] .interp,[data-theme="dark"] .fb-row,[data-theme="dark"] .disclaimer,[data-theme="dark"] .report-form{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .disclaimer{color:#fcd34d}
+    [data-theme="dark"] .img-panel{background:#1e293b;border-color:#334155}
+    [data-theme="dark"] .img-ph,[data-theme="dark"] .img-pf{background:#0f172a;border-color:#334155}
+    [data-theme="dark"] .alert-err{background:#2d1218;border-color:#7f1d1d;color:#fca5a5}
+    [data-theme="dark"] .feat-card{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.07)}
+    [data-theme="dark"] .feat-card:hover{background:rgba(255,255,255,.07);border-color:rgba(130,124,248,.35)}
+    [data-theme="dark"] .step-num,[data-theme="dark"] .v-icon{color:#fff}
+    [data-theme="dark"] .benefit-list li,[data-theme="dark"] .xai-text p{color:#94a3b8}
+    [data-theme="dark"] .divider{opacity:.8}
+    body,nav,.tool-card,.upload-zone,.sym-card,.img-panel,.hist-card,.result-col,.upload-card,.gv-box,.stat-card{transition:background .25s,border-color .25s,color .25s}
   </style>
 </head>
+<script>
+  (function(){const t=localStorage.getItem('pcos-theme')||'light';document.documentElement.setAttribute('data-theme',t)})();
+</script>
 <body>
 
 <div id="lb"><img id="lb-img" src="" alt=""/></div>
@@ -369,6 +431,7 @@
     {% else %}
       <a href="/login" class="nav-sign-in"><i class="fa-brands fa-google"></i> Sign In</a>
     {% endif %}
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu"><i class="fa-solid fa-bars" id="hb-icon"></i></button>
   </div>
 </nav>
@@ -771,6 +834,19 @@
     });
   }, {threshold: .5});
   counters.forEach(c => ob.observe(c));
+
+  /* Dark mode */
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('pcos-theme', next);
+    document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+  }
+  (function(){
+    if (document.documentElement.getAttribute('data-theme') === 'dark')
+      document.getElementById('theme-icon').className = 'fa-solid fa-sun';
+  })();
 
   /* Hamburger nav */
   const hamburger = document.getElementById('hamburger');
