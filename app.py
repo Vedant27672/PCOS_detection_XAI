@@ -9,9 +9,17 @@ from authlib.integrations.flask_client import OAuth
 from pymongo import MongoClient, DESCENDING
 from bson import ObjectId
 import tensorflow as tf
-from tensorflow.keras.models import Model
-from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
-from tensorflow.keras.layers import Flatten, Dense
+
+# TF 2.16+ ships standalone Keras 3; fall back to tf.keras for older versions
+try:
+    import keras
+    from keras.models import Model
+    from keras.applications.mobilenet import MobileNet, preprocess_input
+    from keras.layers import Flatten, Dense
+except Exception:
+    from tensorflow.keras.models import Model
+    from tensorflow.keras.applications.mobilenet import MobileNet, preprocess_input
+    from tensorflow.keras.layers import Flatten, Dense
 from dotenv import load_dotenv
 import gdown
 
